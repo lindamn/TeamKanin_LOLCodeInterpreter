@@ -68,3 +68,37 @@ for i in range(0, len(code)):
         check_string = ""
     elif re.match("^IS NOW A$", check_string):
         check_string = ""
+    elif re.match("^VISIBLE$", check_string):
+        check_string = ""
+    elif re.match("^GIMMEH$", check_string):
+        check_string = ""
+    elif re.match("^O RLY?$", check_string):
+        check_string = ""
+    elif re.match("^YA RLY$", check_string):
+        check_string = ""
+    elif re.match("^MEEBE$", check_string):
+        check_string = ""
+    elif re.match("^NO WAI$", check_string):
+        check_string = ""
+    elif re.match("^OIC$", check_string):
+        check_string = ""
+    elif re.match("^WTF?$", check_string):
+        check_string = ""
+    elif re.match("^OMG$", check_string):
+        check_string = ""
+    elif re.match("^OMG WTF$", check_string):
+        check_string = ""
+    elif re.match("^IM IN YR$", check_string):
+        check_string = ""
+    elif re.match("^UPPIN$", check_string):
+        check_string = ""
+    elif re.match("^NERFIN$", check_string):
+        check_string = ""
+    elif re.match("^YR$", check_string):
+        check_string = ""
+    elif re.match("^TIL$", check_string):
+        check_string = ""
+    elif re.match("^WILE$", check_string):
+        check_string = ""
+    elif re.match("^IM OUTTA YR$", check_string):
+        check_string = ""
