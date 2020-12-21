@@ -1,16 +1,16 @@
-# import Tkinter
-# top = Tkinter.Tk()
+# https://github.com/christianrfg/lexical-analyzer
+# https://github.com/mamerisawesome/acubeLolLexer/blob/master/mytestproj/MainWindow.cs
 
-# top.mainloop()
 import re
 code = '''HAI
 
 KTHXBAI'''
 check_string = ""
+
 #lexeme analyzer ????
 for i in range(0, len(code)):
     # print("Current string:", check_string)
-    if code[i] != "\n":
+    if code[i] != "\n" or code[i] != "\t":
         check_string = check_string + code[i]
     if re.match("^HAI$", check_string):
         check_string = ""
