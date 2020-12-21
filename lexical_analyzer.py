@@ -2,26 +2,23 @@
 
 import re
 
+tab = " "
+
 def LexicalAnalyzer(code):
     check_string = ""
     btw_flag = False
     obtw_flag = False
+    hai_flag = False
 
     for i in range(0, len(code)):
         print(str(i)+" current string:"+ check_string)
+        # print("current character:", ord(code[i]))
         # print("current btw_flag and obtw_flag:", btw_flag, obtw_flag)
-        # if code[i] != "\n" or code[i] != "\t":
-        #     check_string = check_string + code[i]
-        # elif code[i] == "\n":
-        #     print("new line")
-        #     check_string = ""
-        # elif code[i] == "\t":
-        #     print("tab")
-        #     check_string = ""
-        if code[i] == "\n":
+
+        if code[i] == "\n": 
             print("new line")
             check_string = ""
-        elif code[i] == "   ":
+        elif code[i] == tab:
             print("new tab")
             check_string = ""
         else:
@@ -30,6 +27,7 @@ def LexicalAnalyzer(code):
         if btw_flag == False and obtw_flag == False:
             if check_string == "HAI":
                 print("hai")
+                hai_flag = True
                 check_string = ""
             elif re.match("KTHXBAI", check_string):
                 print("kthxbai")
@@ -197,13 +195,14 @@ HAI
         if your interpreter does not implement IT,
         move the expressions to the VISIBLE statement
     TLDR
+
+    BTW basic expressions
+    SUM OF 1 AN 2
+    VISIBLE IT
+    DIFF OF 1 AN 2
+    VISIBLE IT
 '''
 '''
-  BTW basic expressions
-  SUM OF 1 AN 2
-  VISIBLE IT
-  DIFF OF 1 AN 2
-  VISIBLE IT
   PRODUKT OF 1 AN 2
   VISIBLE IT
   QUOSHUNT OF 1.0 AN 2
