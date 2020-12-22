@@ -3,11 +3,11 @@ import re
 def LexicalAnalyzer(code):
 
     keywords = ["HAI", "KTHXBAI", "BTW", "OBTW", "TLDR", "I", "HAS", "A" "ITZ", "R", "SUM", "DIFF", "PRODUKT", "QUOSHUNT", "MOD", "BIGGR", "SMALLR", "BOTH", "EITHER", "WON", "OF", "NOT", "ANY", "ALL", "BOTH", "SAEM", "DIFFRINT", "SMOOSH", "MAEK", "A", "IS", "NOW", "VISIBLE", "GIMMEH", "O", "RLY?", "YA", "RLY", "MEBBE", "NO", "WAI", "OIC", "WTF?", "OMG", "OMGWTF", "IM", "IN", "YR", "UPPIN", "NERFIN", "YR", "TIL", "WILE", "OUTTA"]
-    operators = ["SUM", "DIFF", "PRODUKT", "QUOSHUNT", "MOD", "BIGGR", "SMALLR", "BOTH", "EITHER", "WON", "ANY", "ALL"]
+    operators = ["SUM", "DIFF", "PRODUKT", "QUOSHUNT", "MOD", "BIGGR", "SMALLR", "EITHER", "WON", "ANY", "ALL"]
     etc = ["I", "BOTH", "IS", "O", "YA", "IM", "NO"]
 
     lines = code.split("\n")
-    print(lines)
+    # print(lines)
 
     symbol_table = []
 
@@ -34,17 +34,17 @@ def LexicalAnalyzer(code):
                 operator_flag += 1
             if symbol_table[i][j] in etc:
                 etc_flag += 1
-        print(symbol_table[i])
         while operator_flag > 0:
             for j in range(0, len(symbol_table[i])):
-                # print(symbol_table[i][j])
                 if symbol_table[i][j] in operators:
                     if symbol_table[i][j+1] == "OF":
                         symbol_table[i][j] = symbol_table[i][j] + " OF"
                         symbol_table[i].pop(j+1)
                         operator_flag -= 1
                         break
-                
+                    else:
+                        operator_flag -= 1
+                        break      
         
         while etc_flag > 0:
             for j in range(0, len(symbol_table[i])):
@@ -57,7 +57,6 @@ def LexicalAnalyzer(code):
                         j_plus_2_flag = False
                     if j+2 >= len(symbol_table[i]):
                         j_plus_2_flag = False
-
                     if j_plus_1_flag:
                         if symbol_table[i][j] == "BOTH" and symbol_table[i][j+1] == "SAEM":
                             symbol_table[i][j] = "BOTH SAEM"
@@ -76,6 +75,11 @@ def LexicalAnalyzer(code):
                             break
                         if symbol_table[i][j] == "NO" and symbol_table[i][j+1] == "WAI":
                             symbol_table[i][j] = "NO WAI"
+                            symbol_table[i].pop(j+1)
+                            etc_flag -= 1
+                            break
+                        if symbol_table[i][j] == "BOTH" and symbol_table[i][j+1] == "OF":
+                            symbol_table[i][j] = "BOTH OF"
                             symbol_table[i].pop(j+1)
                             etc_flag -= 1
                             break
@@ -103,10 +107,8 @@ def LexicalAnalyzer(code):
                             symbol_table[i].pop(j+1)
                             etc_flag -= 1
                             break                            
-    
-        
-    print("-----------------")     
-    print(symbol_table)
+                    
+    return symbol_table
 
 code = '''BTW for arithmetic operations
 HAI
@@ -270,4 +272,4 @@ HAI
 KTHXBYE
 
 '''
-LexicalAnalyzer(code2)
+LexicalAnalyzer(code4)
