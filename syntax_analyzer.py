@@ -1,15 +1,16 @@
 import re, lexical_analyzer3
 
+arithmetic_keywords = ["SUM OF", "DIFF OF", "PRODUKT OF", "QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF"]
+comparison_keywords = ["BOTH SAEM", "DIFFRINT", "BIGGR OF", "SMALLR OF"]
+boolean_keywords = ["BOTH OF", "EITHER OF", "WON OF"]
+unary_keywords = ["NOT"]
+infinite_keywords = ["ALL OF", "ANY OF"]
+io_keywords = ["VISIBLE", "GIMMEH"]
+if_keywords = ["O RLY?", "YA RLY", "NO WAI", "OIC"]
+switch_keywords = ["WTF?", "OMG", "OMGWTF", "OIC"]
+
 def SyntaxAnalyzer(symbol_table):
 
-    arithmetic_keywords = ["SUM OF", "DIFF OF", "PRODUKT OF", "QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF"]
-    comparison_keywords = ["BOTH SAEM", "DIFFRINT"]
-    boolean_keywords = ["BOTH OF", "EITHER OF", "WON OF"]
-    unary_keywords = ["NOT"]
-    infinite_keywords = ["ALL OF", "ANY OF"]
-    io_keywords = ["VISIBLE", "GIMMEH"]
-    if_keywords = ["O RLY?", "YA RLY", "NO WAI", "OIC"]
-    switch_keywords = ["WTF?", "OMG", "OMGWTF", "OIC"]
     obtw_flag = False
 
     for i in range(0, len(symbol_table)):
@@ -29,133 +30,267 @@ def SyntaxAnalyzer(symbol_table):
             else:
                 print("ignore (obtw)")
                 continue
-            
+
+            #deals w variable initialization
+            # variable_regex = "^[a-Z]{1}([a-Z0-9_])*"
+            if line[0] == "I HAS A":
+                if len(line) >= 4:
+                    if line[3] in arithmetic_keywords:
+                        Arithmetic(line)
+                    elif line[3] in comparison_keywords:
+                        Comparison(line)
+                    elif line[3] in boolean_keywords:
+                        Boolean(line)
+                print(line)
+
+            #deals w assignment statements
+            if len(line) > 1:
+                if line[1] == "R":
+                    if len(line) > 3:
+                        if line[2] in arithmetic_keywords:
+                            Arithmetic(line)
+                        elif line[2] in comparison_keywords:
+                            Comparison(line)
+                        elif line[2] in boolean_keywords:
+                            Boolean(line)
+
+            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w arithmetic
-            arithmetic_counter = 0
             if line[0] in arithmetic_keywords:
-                for j in range(0, len(line)):
-                    if line[j] in arithmetic_keywords:
-                        arithmetic_counter += 1
-                while arithmetic_counter > 0:
-                    for j in range(0, len(line)):
-                        if line[j] == "AN":
-                            if isinstance(line[j-1], str) and isinstance(line[j+1], str):
-                                if line[j-1] in arithmetic_keywords and line[j+1] in arithmetic_keywords:
-                                    continue
-                                else:
-                                    arithmetic_counter -= 1
-                                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                                    line[j-2] = new_grouping
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    break
-                            elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
-                                if line[j+1] in arithmetic_keywords:
-                                    continue
-                                else:
-                                    arithmetic_counter -= 1
-                                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                                    line[j-2] = new_grouping
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    break
-                            elif isinstance(line[j-1], str) and isinstance(line[j+1], list):
-                                if line[j-1] in arithmetic_keywords:
-                                    continue
-                                else:
-                                    arithmetic_counter -= 1
-                                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                                    line[j-2] = new_grouping
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    break                                    
-                            elif isinstance(line[j-1], list) and isinstance(line[j+1], list):
-                                arithmetic_counter -= 1
-                                new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                                line[j-2] = new_grouping
-                                line.pop(j-1)
-                                line.pop(j-1)
-                                line.pop(j-1)
-                                break
+                Arithmetic(line)
                 print(line)
 
             #deals w comparison
             if line[0] in comparison_keywords:
-                if len(line) == 4:
-                    #both saem and diffrint na ito
-                    print("comparison")
-                elif len(line) == 7:
-                    #relational operators
-                    print("relational")
-
-            #deals w boolean
-            boolean_counter = 0
-            not_counter = 0
-            if line[0] in boolean_keywords or line[0] in unary_keywords:
-                for j in range(0, len(line)):
-                    if line[j] in unary_keywords:
-                        not_counter += 1
-                while not_counter > 0:
-                    for j in range(0, len(line)):
-                        if line[j] in unary_keywords:
-                            not_counter -= 1
-                            new_grouping = [line[j],line[j+1]]
-                            line[j] = new_grouping
-                            line.pop(j+1)
-                            break
-                for j in range(0, len(line)):
-                    if line[j] in boolean_keywords:
-                        boolean_counter += 1
-                while boolean_counter > 0:
-                    for j in range(0, len(line)):
-                        if line[j] == "AN":
-                            if isinstance(line[j-1], str) and isinstance(line[j+1], str):
-                                if line[j-1] in boolean_keywords and line[j+1] in boolean_keywords:
-                                    continue
-                                else:
-                                    boolean_counter -= 1
-                                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                                    line[j-2] = new_grouping
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    break
-                            elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
-                                if line[j+1] in boolean_keywords:
-                                    continue
-                                else:
-                                    boolean_counter -= 1
-                                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                                    line[j-2] = new_grouping
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    break
-                            elif isinstance(line[j-1], str) and isinstance(line[j+1], list):
-                                if line[j-1] in boolean_keywords:
-                                    continue
-                                else:
-                                    boolean_counter -= 1
-                                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                                    line[j-2] = new_grouping
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    line.pop(j-1)
-                                    break                                    
-                            elif isinstance(line[j-1], list) and isinstance(line[j+1], list):
-                                boolean_counter -= 1
-                                new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                                line[j-2] = new_grouping
-                                line.pop(j-1)
-                                line.pop(j-1)
-                                line.pop(j-1)
-                                break
+                Comparison(line)
                 print(line)
 
+            #deals w boolean
+            if line[0] in boolean_keywords or line[0] in unary_keywords:
+                Boolean(line)
+                print(line)
 
+def Arithmetic(line):
+    arithmetic_counter = 0
+    for j in range(0, len(line)):
+        if line[j] in arithmetic_keywords:
+            arithmetic_counter += 1
+    while arithmetic_counter > 0:
+        for j in range(0, len(line)):
+            if line[j] == "AN":
+                if isinstance(line[j-1], str) and isinstance(line[j+1], str):
+                    if line[j-1] in arithmetic_keywords and line[j+1] in arithmetic_keywords:
+                        continue
+                    elif line[j-1] not in arithmetic_keywords and line[j+1] in arithmetic_keywords:
+                        continue
+                    elif line[j-1] in arithmetic_keywords and line[j+1] not in arithmetic_keywords:
+                        continue
+                    elif line[j-1] not in arithmetic_keywords and line[j+1] not in arithmetic_keywords:
+                        arithmetic_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break
+                elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
+                    if line[j+1] in arithmetic_keywords:
+                        continue
+                    else:
+                        arithmetic_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break
+                elif isinstance(line[j-1], str) and isinstance(line[j+1], list):
+                    if line[j-1] in arithmetic_keywords:
+                        continue
+                    else:
+                        arithmetic_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break                                    
+                elif isinstance(line[j-1], list) and isinstance(line[j+1], list):
+                    arithmetic_counter -= 1
+                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                    line[j-2] = new_grouping
+                    line.pop(j-1)
+                    line.pop(j-1)
+                    line.pop(j-1)
+                    break
+    # print(line)
+
+def Comparison(line):
+    comparison_counter = 0
+    for j in range(0, len(line)):
+        if line[j] in comparison_keywords:
+            comparison_counter += 1
+    while comparison_counter > 0:
+        for j in range(0, len(line)):
+            if line[j] == "AN":
+                if isinstance(line[j-1], str) and isinstance(line[j+1], str):
+                    if line[j-1] in comparison_keywords and line[j+1] in comparison_keywords:
+                        continue
+                    elif line[j-1] not in comparison_keywords and line[j+1] in comparison_keywords:
+                        continue
+                    elif line[j-1] in comparison_keywords and line[j+1] not in comparison_keywords:
+                        continue
+                    elif line[j-1] not in comparison_keywords and line[j+1] not in comparison_keywords:
+                        comparison_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break
+                elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
+                    if line[j+1] in comparison_keywords:
+                        continue
+                    else:
+                        comparison_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break
+                elif isinstance(line[j-1], str) and isinstance(line[j+1], list):
+                    if line[j-1] in comparison_keywords:
+                        continue
+                    else:
+                        comparison_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break                                    
+                elif isinstance(line[j-1], list) and isinstance(line[j+1], list):
+                    comparison_counter -= 1
+                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                    line[j-2] = new_grouping
+                    line.pop(j-1)
+                    line.pop(j-1)
+                    line.pop(j-1)
+                    break
+    # print(line)
+
+def Boolean(line):
+    boolean_counter = 0
+    not_counter = 0
+    for j in range(0, len(line)):
+        if line[j] in unary_keywords:
+            not_counter += 1
+    while not_counter > 0:
+        for j in range(0, len(line)):
+            if line[j] in unary_keywords:
+                not_counter -= 1
+                new_grouping = [line[j],line[j+1]]
+                line[j] = new_grouping
+                line.pop(j+1)
+                break
+    for j in range(0, len(line)):
+        if line[j] in boolean_keywords:
+            boolean_counter += 1
+    while boolean_counter > 0:
+        for j in range(0, len(line)):
+            if line[j] == "AN":
+                if isinstance(line[j-1], str) and isinstance(line[j+1], str):
+                    if line[j-1] in boolean_keywords and line[j+1] in boolean_keywords:
+                        continue
+                    elif line[j-1] not in boolean_keywords and line[j+1] in boolean_keywords:
+                        continue
+                    elif line[j-1] in boolean_keywords and line[j+1] not in boolean_keywords:
+                        continue
+                    elif line[j-1] not in boolean_keywords and line[j+1] not in boolean_keywords:
+                        boolean_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break
+                elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
+                    if line[j+1] in boolean_keywords:
+                        continue
+                    else:
+                        boolean_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break
+                elif isinstance(line[j-1], str) and isinstance(line[j+1], list):
+                    if line[j-1] in boolean_keywords:
+                        continue
+                    else:
+                        boolean_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break                                    
+                elif isinstance(line[j-1], list) and isinstance(line[j+1], list):
+                    boolean_counter -= 1
+                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                    line[j-2] = new_grouping
+                    line.pop(j-1)
+                    line.pop(j-1)
+                    line.pop(j-1)
+                    break
+    # print(line)
+
+code5 = '''
+BTW test case for variables
+HAI
+
+  BTW variable declarations
+  BTW initialization of literal values
+  I HAS A var1
+  I HAS A var2 ITZ 17
+  I HAS A var3 ITZ "seventeen"
+  I HAS A var4 ITZ 5.26
+  I HAS A var5 ITZ WIN
+  
+  BTW initialization of variable using variable
+  I HAS A var6 ITZ var2
+
+  BTW initialization of variable using expressions
+  I HAS A var7 ITZ DIFF OF 1 AN 2
+  I HAS A var8 ITZ QUOSHUNT OF 144 AN SUM OF 3 AN 9
+  I HAS A var9 ITZ DIFFRINT 1 AN 1
+  I HAS A var10 ITZ DIFFRINT 2 AN 1
+  I HAS A var11 ITZ NOT WIN
+
+  BTW printing for validation
+  OBTW
+    if your interpreter cannot print variables
+    but can support variables,
+    make sure that the values are updated in the symbol table
+  TLDR
+
+  BTW VISIBLE var1  // cannot be printed coz NOOB
+  VISIBLE var2
+  VISIBLE var3
+  VISIBLE var4
+  VISIBLE var5
+  VISIBLE var6
+  VISIBLE var7
+  VISIBLE var8
+  VISIBLE var9
+  VISIBLE var10
+  VISIBLE var11
+
+KTHXBYE
+
+'''
 
 code = '''BTW for arithmetic operations
 HAI
@@ -317,5 +452,5 @@ HAI
 KTHXBYE
 '''
 
-symbol_table = lexical_analyzer3.LexicalAnalyzer(code)
+symbol_table = lexical_analyzer3.LexicalAnalyzer(code5)
 SyntaxAnalyzer(symbol_table)
