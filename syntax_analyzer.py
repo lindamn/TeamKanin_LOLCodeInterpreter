@@ -6,12 +6,20 @@ boolean_keywords = ["BOTH OF", "EITHER OF", "WON OF"]
 unary_keywords = ["NOT"]
 infinite_keywords = ["ALL OF", "ANY OF"]
 io_keywords = ["VISIBLE", "GIMMEH"]
-if_keywords = ["O RLY?", "YA RLY", "NO WAI", "OIC"]
-switch_keywords = ["WTF?", "OMG", "OMGWTF", "OIC"]
+# if_keywords = ["O RLY?", "YA RLY", "NO WAI", "OIC"]
+# switch_keywords = ["WTF?", "OMG", "OMGWTF", "OIC"]
 
 def SyntaxAnalyzer(symbol_table):
 
     obtw_flag = False
+    
+    orly_flag = False
+    yarly_flag = False
+    nowai_flag = False
+    
+    wtf_flag = False
+    omg_flag = False
+    omgwtf_flag = False
 
     for i in range(0, len(symbol_table)):
         line = symbol_table[i]
@@ -32,6 +40,7 @@ def SyntaxAnalyzer(symbol_table):
                 continue
 
             #deals w variable initialization
+            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             # variable_regex = "^[a-Z]{1}([a-Z0-9_])*"
             if line[0] == "I HAS A":
                 if len(line) >= 4:
@@ -43,6 +52,7 @@ def SyntaxAnalyzer(symbol_table):
                         Boolean(line)
                 print(line)
 
+            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w assignment statements
             if len(line) > 1:
                 if line[1] == "R":
@@ -54,21 +64,108 @@ def SyntaxAnalyzer(symbol_table):
                         elif line[2] in boolean_keywords:
                             Boolean(line)
 
+            #deals w if-else
+            if line[0] == "OIC" and orly_flag == True:
+                nowai_flag = False
+                orly_flag = False
+            if orly_flag == False:
+                if line[0] == "O RLY?":
+                    orly_flag = True
+            else:
+                # look for ya rly and no wai
+                if line[0] == "YA RLY":
+                    yarly_flag = True
+                if line[0] == "NO WAI":
+                    yarly_flag = False
+                    nowai_flag = True
+                if yarly_flag == True:
+                    #continue hanggang sa makakita ng no wai
+                    if line[0] in arithmetic_keywords:
+                        Arithmetic(line)
+                        print(line)
+                    if line[0] in comparison_keywords:
+                        Comparison(line)
+                        print(line)
+                    if line[0] in boolean_keywords or line[0] in unary_keywords:
+                        Boolean(line)
+                        print(line)
+                if nowai_flag == True:
+                    if line[0] in arithmetic_keywords:
+                        Arithmetic(line)
+                        print(line)
+                    if line[0] in comparison_keywords:
+                        Comparison(line)
+                        print(line)
+                    if line[0] in boolean_keywords or line[0] in unary_keywords:
+                        Boolean(line)
+                        print(line)
+
+            #deals w switch-case
+            if line[0] == "OIC" and wtf_flag == True and omg_flag == True:
+                omg_flag = False
+                wtf_flag = False
+                # print("switch case ended w/ omg")
+            
+            if line[0] == "OIC" and wtf_flag == True and omgwtf_flag == True:
+                omgwtf_flag = False
+                wtf_flag = False
+                # print("switch case ended w/ omgwtf")
+            
+            if wtf_flag == False:
+                #checks if there is wtf
+                if line[0] == "WTF?":
+                    wtf_flag = True
+            else:
+                #look for omgs
+                if line[0] == "OMG":
+                    # print("omg spotted")
+                    omg_flag = True
+                if omg_flag == True:
+                    if line[0] in arithmetic_keywords:
+                        Arithmetic(line)
+                        print(line)
+                    if line[0] in comparison_keywords:
+                        Comparison(line)
+                        print(line)
+                    if line[0] in boolean_keywords or line[0] in unary_keywords:
+                        Boolean(line)
+                        print(line)
+                    if line[0] == "GTFO":
+                        # print("omg ended")
+                        # omgwtf_flag = False
+                        # wtf_flag = False
+                        omg_flag = False
+                if line[0] == "OMGWTF":
+                    # print("default case")
+                    if line[0] in arithmetic_keywords:
+                        Arithmetic(line)
+                        print(line)
+                    if line[0] in comparison_keywords:
+                        Comparison(line)
+                        print(line)
+                    if line[0] in boolean_keywords or line[0] in unary_keywords:
+                        Boolean(line)
+                        print(line)
+
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w arithmetic
             if line[0] in arithmetic_keywords:
                 Arithmetic(line)
                 print(line)
 
+            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w comparison
             if line[0] in comparison_keywords:
                 Comparison(line)
                 print(line)
-
+            
+            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w boolean
             if line[0] in boolean_keywords or line[0] in unary_keywords:
                 Boolean(line)
                 print(line)
+
+    return symbol_table
 
 def Arithmetic(line):
     arithmetic_counter = 0
@@ -128,19 +225,19 @@ def Arithmetic(line):
 def Comparison(line):
     comparison_counter = 0
     for j in range(0, len(line)):
-        if line[j] in comparison_keywords:
+        if line[j] in comparison_keywords or line[j] in arithmetic_keywords:
             comparison_counter += 1
     while comparison_counter > 0:
         for j in range(0, len(line)):
             if line[j] == "AN":
                 if isinstance(line[j-1], str) and isinstance(line[j+1], str):
-                    if line[j-1] in comparison_keywords and line[j+1] in comparison_keywords:
+                    if (line[j-1] in comparison_keywords or line[j-1] in arithmetic_keywords) and (line[j+1] in comparison_keywords or line[j+1] in arithmetic_keywords):
                         continue
-                    elif line[j-1] not in comparison_keywords and line[j+1] in comparison_keywords:
+                    elif (line[j-1] not in comparison_keywords or line[j-1] not in arithmetic_keywords) and (line[j+1] in comparison_keywords or line[j+1] in arithmetic_keywords):
                         continue
-                    elif line[j-1] in comparison_keywords and line[j+1] not in comparison_keywords:
+                    elif (line[j-1] in comparison_keywords or line[j-1] in arithmetic_keywords) and (line[j+1] not in comparison_keywords or line[j+1] not in arithmetic_keywords):
                         continue
-                    elif line[j-1] not in comparison_keywords and line[j+1] not in comparison_keywords:
+                    elif (line[j-1] not in comparison_keywords or line[j-1] not in arithmetic_keywords) and (line[j+1] not in comparison_keywords or line[j+1] not in arithmetic_keywords):
                         comparison_counter -= 1
                         new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
                         line[j-2] = new_grouping
@@ -148,8 +245,9 @@ def Comparison(line):
                         line.pop(j-1)
                         line.pop(j-1)
                         break
+                    print(line)
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
-                    if line[j+1] in comparison_keywords:
+                    if line[j+1] in comparison_keywords or line[j+1] in arithmetic_keywords:
                         continue
                     else:
                         comparison_counter -= 1
@@ -160,7 +258,7 @@ def Comparison(line):
                         line.pop(j-1)
                         break
                 elif isinstance(line[j-1], str) and isinstance(line[j+1], list):
-                    if line[j-1] in comparison_keywords:
+                    if line[j-1] in comparison_keywords or line[j-1] in arithmetic_keywords:
                         continue
                     else:
                         comparison_counter -= 1
@@ -178,7 +276,7 @@ def Comparison(line):
                     line.pop(j-1)
                     line.pop(j-1)
                     break
-    # print(line)
+    print(line)
 
 def Boolean(line):
     boolean_counter = 0
@@ -246,6 +344,65 @@ def Boolean(line):
                     line.pop(j-1)
                     break
     # print(line)
+
+code7 = '''
+BTW for switch
+HAI
+  IT R 18
+  WTF?
+    OMG 1
+      VISIBLE "I'm the only oneeeee"
+      GTFO
+    OMG 3
+      VISIBLE "third time's a charm"
+    OMG 5
+      VISIBLE "no one wants a five"
+      GTFO
+    OMG 7
+      VISIBLE "why is six afraid of seven?"
+      VISIBLE "7 8 " SUM OF IT AN 2
+      GTFO
+    OMG 11
+      VISIBLE "Friends don't lie. -Eleven"
+      GTFO
+    OMG 13
+      VISIBLE "birthday ni taylor swift, dec 13"
+    OMG 17
+      VISIBLE "seventeen right here"
+    OMGWTF
+      VISIBLE "ano na"
+      VISIBLE IT
+    OIC
+
+KTHXBYE
+
+'''
+
+code6 = '''
+BTW for if-else statements
+HAI
+  I HAS A a ITZ 12
+  I HAS A b ITZ 5
+
+  BOTH SAEM 18 AN SUM OF 12 AN b
+  O RLY?
+    YA RLY
+      VISIBLE IT
+      VISIBLE "it is the same"
+      b R 17
+      SUM OF b AN DIFF OF a AN 5
+      VISIBLE IT
+    NO WAI
+      VISIBLE IT
+      VISIBLE "it is not!"
+      b R 18
+      DIFFRINT b AN SUM OF 12 AN b
+      VISIBLE IT
+  OIC
+
+KTHXBYE
+
+'''
 
 code5 = '''
 BTW test case for variables
@@ -452,5 +609,5 @@ HAI
 KTHXBYE
 '''
 
-symbol_table = lexical_analyzer3.LexicalAnalyzer(code5)
+symbol_table = lexical_analyzer3.LexicalAnalyzer(code7)
 SyntaxAnalyzer(symbol_table)
