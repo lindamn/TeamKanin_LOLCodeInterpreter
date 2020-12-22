@@ -7,7 +7,6 @@ def LexicalAnalyzer(code):
     etc = ["I", "BOTH", "IS", "O", "YA", "IM", "NO"]
 
     lines = code.split("\n")
-    # print(lines)
 
     symbol_table = []
 
@@ -23,8 +22,8 @@ def LexicalAnalyzer(code):
         for j in range(0, len(split_list)):
             if split_list[j] != "":
                 new_split_list.append(split_list[j])
-        if new_split_list != []:
-            symbol_table.append(new_split_list)
+        # if new_split_list != []:
+        symbol_table.append(new_split_list)
 
     for i in range(0, len(symbol_table)):
         operator_flag = 0
@@ -107,7 +106,8 @@ def LexicalAnalyzer(code):
                             symbol_table[i].pop(j+1)
                             etc_flag -= 1
                             break                            
-                    
+    
+    print(symbol_table)
     return symbol_table
 
 code = '''BTW for arithmetic operations
@@ -272,4 +272,4 @@ HAI
 KTHXBYE
 
 '''
-LexicalAnalyzer(code4)
+# LexicalAnalyzer(code)
