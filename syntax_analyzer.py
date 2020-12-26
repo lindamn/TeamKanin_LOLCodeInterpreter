@@ -59,7 +59,7 @@ def SyntaxAnalyzer(symbol_table):
                         Comparison(line)
                     elif line[3] in boolean_keywords:
                         Boolean(line)
-                print(line)
+                # print(line)
 
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w assignment statements
@@ -174,9 +174,9 @@ def SyntaxAnalyzer(symbol_table):
                 Boolean(line)
                 print(line)
 
-    print(symbol_table)
-    # print(symbol_table[-20][0])
-    # print(evaluate(symbol_table[-20][0]))
+    # print(symbol_table)
+
+    # print(checkVar("var1"))
 
     return symbol_table
 
@@ -193,6 +193,19 @@ def checkFloat(string):
         return True
     except ValueError:
         return False
+
+def checkVar(string):
+    if re.match(r"^[a-zA-Z]{1}([a-zA-Z0-9_])*", string):
+        return True
+    else:
+        return False
+
+def checkBoolean(string):
+    if string == "WIN":
+        return True
+    if string == "FAIL":
+        return True
+    return False
 
 # credits to https://stackoverflow.com/a/40775654
 def evaluate(nested_list):
@@ -229,13 +242,16 @@ def Arithmetic(line):
                     elif line[j-1] in arithmetic_keywords and line[j+1] not in arithmetic_keywords:
                         continue
                     elif line[j-1] not in arithmetic_keywords and line[j+1] not in arithmetic_keywords:
-                        arithmetic_counter -= 1
-                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                        line[j-2] = new_grouping
-                        line.pop(j-1)
-                        line.pop(j-1)
-                        line.pop(j-1)
-                        break
+                        if (checkInt(line[j-1]) or checkFloat(line[j-1]) or checkVar(line[j-1])) and (checkInt(line[j+1]) or checkFloat(line[j+1]) or checkVar(line[j-1])):
+                            arithmetic_counter -= 1
+                            new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                            line[j-2] = new_grouping
+                            line.pop(j-1)
+                            line.pop(j-1)
+                            line.pop(j-1)
+                            break
+                        else:
+                            print("Invalid formats!")
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
                     if line[j+1] in arithmetic_keywords:
                         continue
@@ -266,7 +282,6 @@ def Arithmetic(line):
                     line.pop(j-1)
                     line.pop(j-1)
                     break
-    # print(line)
 
 def Comparison(line):
     comparison_counter = 0
@@ -352,13 +367,17 @@ def Boolean(line):
                     elif line[j-1] in boolean_keywords and line[j+1] not in boolean_keywords:
                         continue
                     elif line[j-1] not in boolean_keywords and line[j+1] not in boolean_keywords:
-                        boolean_counter -= 1
-                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                        line[j-2] = new_grouping
-                        line.pop(j-1)
-                        line.pop(j-1)
-                        line.pop(j-1)
-                        break
+                        if checkBoolean(line[j-1]) and checkBoolean(line[j+1]):
+                            boolean_counter -= 1
+                            new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                            line[j-2] = new_grouping
+                            line.pop(j-1)
+                            line.pop(j-1)
+                            line.pop(j-1)
+                            break
+                        else:
+                            print("Invalid inputs!")
+                            break
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
                     if line[j+1] in boolean_keywords:
                         continue

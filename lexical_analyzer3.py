@@ -151,7 +151,7 @@ def LexicalAnalyzer(code):
                             etc_flag -= 1
                             break                            
     
-    print(symbol_table)
+    # print(symbol_table)
     return symbol_table
 
 code5 = '''
