@@ -1,4 +1,4 @@
-import re, lexical_analyzer3
+import re, lexical_analyzer3, operator
 
 arithmetic_keywords = ["SUM OF", "DIFF OF", "PRODUKT OF", "QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF"]
 comparison_keywords = ["BOTH SAEM", "DIFFRINT", "BIGGR OF", "SMALLR OF"]
@@ -23,7 +23,7 @@ def SyntaxAnalyzer(symbol_table):
 
     for i in range(0, len(symbol_table)):
         line = symbol_table[i]
-        print("current line:", line)
+        # print("current line:", line)
         if len(line) != 0:
             # ignores comments
             if line[0] == "TLDR":
@@ -33,11 +33,20 @@ def SyntaxAnalyzer(symbol_table):
                     obtw_flag = True
                 for j in range(0, len(line)):
                     if line[j] == "BTW":
-                        print("ignore (btw)")
+                        # print("ignore (btw)")
                         break
             else:
-                print("ignore (obtw)")
+                # print("ignore (obtw)")
                 continue
+            
+            #deals w output (visible)
+            if line[0] == "VISIBLE":
+                if line[1] in arithmetic_keywords:
+                    Arithmetic(line)
+                elif line[1] in comparison_keywords:
+                    Comparison(line)
+                elif line[1] in boolean_keywords:
+                    Boolean(line)
 
             #deals w variable initialization
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
@@ -165,7 +174,44 @@ def SyntaxAnalyzer(symbol_table):
                 Boolean(line)
                 print(line)
 
+    print(symbol_table)
+    # print(symbol_table[-20][0])
+    # print(evaluate(symbol_table[-20][0]))
+
     return symbol_table
+
+def checkInt(string):
+    try:
+        int(string)
+        return True
+    except ValueError:
+        return False
+    
+def checkFloat(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
+
+# credits to https://stackoverflow.com/a/40775654
+def evaluate(nested_list):
+    if isinstance(nested_list, str):
+        #dito ichecheck kung valid ba yung format ng operands
+        if checkInt(nested_list) or checkFloat(nested_list):
+            return float(nested_list)
+
+    op, operand1, an, operand2 = nested_list
+    ops = {
+        "SUM OF":operator.add,
+        "PRODUKT OF":operator.mul,
+        "DIFF OF":operator.sub,
+        "QUOSHUNT OF":operator.truediv,
+        "MOD OF":operator.mod,
+        "BIGGR OF":max,
+        "SMALLR OF":min
+    }
+    return ops[op](evaluate(operand1), evaluate(operand2))
 
 def Arithmetic(line):
     arithmetic_counter = 0
@@ -609,5 +655,35 @@ HAI
 KTHXBYE
 '''
 
-symbol_table = lexical_analyzer3.LexicalAnalyzer(code7)
+code8 = '''
+BTW for USER INPUT/OUTPUT
+HAI
+
+  BTW printing of literals
+  VISIBLE "henlo"
+  VISIBLE 17
+  VISIBLE 1.7
+  VISIBLE WIN
+
+  BTW infinite arity printing (concat)
+  VISIBLE "hi, I'm pi. My value is " 3.14
+  VISIBLE "brrr " "baaa " "fa la la," " la la"
+
+  BTW printing of expressions
+  VISIBLE SUM OF 2 AN PRODUKT OF 3 AN 5
+  VISIBLE BOTH SAEM 2 AN 3
+  VISIBLE EITHER OF WIN AN FAIL
+
+  BTW printing of variables and use of GIMMEH
+  I HAS A input 
+  VISIBLE "gif imput "
+  GIMMEH input
+  VISIBLE input
+  VISIBLE "u gif meh " input "!"
+
+KTHXBYE
+
+'''
+
+symbol_table = lexical_analyzer3.LexicalAnalyzer(code8)
 SyntaxAnalyzer(symbol_table)

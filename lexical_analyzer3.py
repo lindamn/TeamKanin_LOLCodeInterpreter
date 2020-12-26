@@ -10,13 +10,56 @@ def LexicalAnalyzer(code):
 
     symbol_table = []
 
+    # splits the lines by spaces
     for i in range(0, len(lines)):
+        # print(lines[i])
+        if re.search("VISIBLE",lines[i]):
+            quote_flag = False
+            strings = re.findall(r"[\"]([^\"]*?)[\"]", lines[i])
+
+            strings_count = len(strings)
+            temp = lines[i].split(" ")
+            #cleans the temp list, removes empty strings
+            new_temp = []
+            for j in range(0, len(temp)):
+                if temp[j] != "":
+                    new_temp.append(temp[j])
+            
+            #appends the variables and literals to the list of lexemes
+            new_split_list = []
+            new_split_list.append("VISIBLE")
+            for j in range(0, len(new_temp)):
+                # counts the number of double quotes in a string, if it is 2 then it automatically adds the string to the list of lexemes
+                # if it is one, it keeps track until the other double quotes show up (and appends the str once it sees the double quotes)
+                quote_count = new_temp[j].count("\"")
+                if new_temp[j] == "VISIBLE":
+                    continue
+                if "\"" in new_temp[j]:
+                    if quote_count == 1:
+                        if quote_flag == False:
+                            quote_flag = True
+                        else:
+                            quote_flag = False
+                            new_str = "\""+strings[len(strings)-strings_count]+"\""
+                            strings_count -= 1
+                            new_split_list.append(new_str)
+                    else:
+                        new_str = "\""+strings[len(strings)-strings_count]+"\""
+                        strings_count -= 1
+                        new_split_list.append(new_str)
+                else:
+                    if quote_flag == False:
+                        new_split_list.append(new_temp[j])
+            symbol_table.append(new_split_list)
+            continue
+
+        # for other cases aside VISIBLE
         split_list = lines[i].split(" ")
 
-        for words in split_list:
-            for valid_words in keywords:
-                if valid_words == words:
-                    continue
+        # for words in split_list:
+        #     for valid_words in keywords:
+        #         if valid_words == words:
+        #             continue
 
         new_split_list = []
         for j in range(0, len(split_list)):
@@ -24,7 +67,8 @@ def LexicalAnalyzer(code):
                 new_split_list.append(split_list[j])
         # if new_split_list != []:
         symbol_table.append(new_split_list)
-
+        
+    # pagsasama samahin yung mga keywords separated w spaces
     for i in range(0, len(symbol_table)):
         operator_flag = 0
         etc_flag = 0
@@ -109,6 +153,36 @@ def LexicalAnalyzer(code):
     
     print(symbol_table)
     return symbol_table
+
+code5 = '''
+BTW for USER INPUT/OUTPUT
+HAI
+
+  BTW printing of literals
+  VISIBLE "henlo"
+  VISIBLE 17
+  VISIBLE 1.7
+  VISIBLE WIN
+
+  BTW infinite arity printing (concat)
+  VISIBLE "hi, I'm pi. My value is " 3.14
+  VISIBLE "brrr " "baaa " "fa la la," " la la"
+
+  BTW printing of expressions
+  VISIBLE SUM OF 2 AN PRODUKT OF 3 AN 5
+  VISIBLE BOTH SAEM 2 AN 3
+  VISIBLE EITHER OF WIN AN FAIL
+
+  BTW printing of variables and use of GIMMEH
+  I HAS A input 
+  VISIBLE "gif imput "
+  GIMMEH input
+  VISIBLE input
+  VISIBLE "u gif meh " input "!"
+
+KTHXBYE
+
+'''
 
 code = '''BTW for arithmetic operations
 HAI
@@ -272,4 +346,4 @@ HAI
 KTHXBYE
 
 '''
-# LexicalAnalyzer(code)
+LexicalAnalyzer(code5)
