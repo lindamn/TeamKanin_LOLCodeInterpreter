@@ -1,4 +1,4 @@
-import re, lexical_analyzer3, operator
+import re, lexical_analyzer3, operator, copy
 
 arithmetic_keywords = ["SUM OF", "DIFF OF", "PRODUKT OF", "QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF"]
 comparison_keywords = ["BOTH SAEM", "DIFFRINT", "BIGGR OF", "SMALLR OF"]
@@ -6,10 +6,11 @@ boolean_keywords = ["BOTH OF", "EITHER OF", "WON OF"]
 unary_keywords = ["NOT"]
 infinite_keywords = ["ALL OF", "ANY OF"]
 io_keywords = ["VISIBLE", "GIMMEH"]
-# if_keywords = ["O RLY?", "YA RLY", "NO WAI", "OIC"]
-# switch_keywords = ["WTF?", "OMG", "OMGWTF", "OIC"]
 
-def SyntaxAnalyzer(symbol_table):
+legit_symbol_table = []
+
+
+def SyntaxAnalyzer(symbol_table, lexemes_table):
 
     obtw_flag = False
     
@@ -21,8 +22,14 @@ def SyntaxAnalyzer(symbol_table):
     omg_flag = False
     omgwtf_flag = False
 
+    it_variable = ["IT", "NOOB", None, None]
+    legit_symbol_table.append(it_variable)
+
+
     for i in range(0, len(symbol_table)):
+
         line = symbol_table[i]
+        temp = copy.deepcopy(line)
         # print("current line:", line)
         if len(line) != 0:
             # ignores comments
@@ -52,26 +59,107 @@ def SyntaxAnalyzer(symbol_table):
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             # variable_regex = "^[a-Z]{1}([a-Z0-9_])*"
             if line[0] == "I HAS A":
-                if len(line) >= 4:
+                new_variable = [None,None,None,None]
+                new_variable[0] = line[1]
+
+                if len(line) > 4:
                     if line[3] in arithmetic_keywords:
                         Arithmetic(line)
+                        print(line)
+                        print("nasa arithmetic")
+                        #dito ilalagay
                     elif line[3] in comparison_keywords:
                         Comparison(line)
-                    elif line[3] in boolean_keywords:
+                        print(line)
+                        print("nasa comparison")
+
+                    elif line[3] in boolean_keywords or line[3] in unary_keywords:
+                        print(line)
+                        print("NASA BOOLEAN!!!")
                         Boolean(line)
+
+                if len(line) == 2:
+                    new_variable[1] = "NOOB"
+
+                if len(line) == 4:
+                    print("NASA 4 AKO")
+                    new_variable[2] = line[3]
+
+                    if isinstance(new_variable[2], list):
+                        if new_variable[2][0] in arithmetic_keywords:
+                            floatflag = 0
+                            for items in temp:
+                                if checkFloat(items):
+                                    print("ETO PO YUNG FLOAT")
+                                    print(items)
+                                    # may float
+                                    floatflag = 1
+                            if floatflag == 1:
+                                new_variable[1] = 'NUMBAR'
+                            else:
+                                new_variable[1] = "NUMBR"
+
+                        elif new_variable[2][0] in comparison_keywords or new_variable[2][0] in boolean_keywords or new_variable[2][0] in unary_keywords:
+                            new_variable[1] = "TROOF"
+
+                    for element in lexemes_table:
+                        if element.lexeme == new_variable[2]:
+                            # string example "YARN LITERAL"
+                            store_list = element.type.split()
+                            # get only YARN
+                            new_variable[1] = store_list[0]
+
+                legit_symbol_table.append(new_variable)
                 # print(line)
 
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w assignment statements
             if len(line) > 1:
                 if line[1] == "R":
+
+
+                    for idx in range(len(legit_symbol_table)):
+                        if legit_symbol_table[idx][0] == line[0]:
+                            tableindex = idx
+                            break
+
                     if len(line) > 3:
                         if line[2] in arithmetic_keywords:
                             Arithmetic(line)
                         elif line[2] in comparison_keywords:
                             Comparison(line)
-                        elif line[2] in boolean_keywords:
+                        elif line[2] in boolean_keywords or line[2] in unary_keywords:
                             Boolean(line)
+
+
+                    if len(line) == 3:
+                        legit_symbol_table[tableindex][2] = line[2]
+                        if isinstance(legit_symbol_table[tableindex][2], list):
+                            if line[2][0] in arithmetic_keywords:
+                                floatflag = 0
+                                for items in temp:
+                                    if checkFloat(items):
+                                        # may float
+                                        floatflag = 1
+                                if floatflag == 1:
+                                    legit_symbol_table[tableindex][1] = 'NUMBAR'
+                                else:
+                                    legit_symbol_table[tableindex][1] = "NUMBR"
+
+                            elif line[2][0] in comparison_keywords or line[2][0] in boolean_keywords or line[2][0] in unary_keywords:
+                                legit_symbol_table[tableindex][1] = "TROOF"
+
+
+                        for element in lexemes_table:
+                            if element.lexeme == legit_symbol_table[tableindex][2]:
+                                #string example "YARN LITERAL"
+                                store_list = element.type.split()
+                                #get only YARN
+                                legit_symbol_table[tableindex][1] = store_list[0]
+
+
+
+
 
             #deals w if-else
             if line[0] == "OIC" and orly_flag == True:
@@ -91,23 +179,23 @@ def SyntaxAnalyzer(symbol_table):
                     #continue hanggang sa makakita ng no wai
                     if line[0] in arithmetic_keywords:
                         Arithmetic(line)
-                        print(line)
+                        #print(line)
                     if line[0] in comparison_keywords:
                         Comparison(line)
-                        print(line)
+                        #print(line)
                     if line[0] in boolean_keywords or line[0] in unary_keywords:
                         Boolean(line)
-                        print(line)
+                        #print(line)
                 if nowai_flag == True:
                     if line[0] in arithmetic_keywords:
                         Arithmetic(line)
-                        print(line)
+                        #print(line)
                     if line[0] in comparison_keywords:
                         Comparison(line)
-                        print(line)
+                        #print(line)
                     if line[0] in boolean_keywords or line[0] in unary_keywords:
                         Boolean(line)
-                        print(line)
+                       #print(line)
 
             #deals w switch-case
             if line[0] == "OIC" and wtf_flag == True and omg_flag == True:
@@ -132,13 +220,13 @@ def SyntaxAnalyzer(symbol_table):
                 if omg_flag == True:
                     if line[0] in arithmetic_keywords:
                         Arithmetic(line)
-                        print(line)
+                        #print(line)
                     if line[0] in comparison_keywords:
                         Comparison(line)
-                        print(line)
+                        #print(line)
                     if line[0] in boolean_keywords or line[0] in unary_keywords:
                         Boolean(line)
-                        print(line)
+                        #print(line)
                     if line[0] == "GTFO":
                         # print("omg ended")
                         # omgwtf_flag = False
@@ -148,64 +236,80 @@ def SyntaxAnalyzer(symbol_table):
                     # print("default case")
                     if line[0] in arithmetic_keywords:
                         Arithmetic(line)
-                        print(line)
+                        #print(line)
                     if line[0] in comparison_keywords:
                         Comparison(line)
-                        print(line)
+                        #print(line)
                     if line[0] in boolean_keywords or line[0] in unary_keywords:
                         Boolean(line)
-                        print(line)
+                        #print(line)
 
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w arithmetic
             if line[0] in arithmetic_keywords:
                 Arithmetic(line)
-                print(line)
+                #print(line)
 
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w comparison
             if line[0] in comparison_keywords:
                 Comparison(line)
-                print(line)
+                #print(line)
             
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w boolean
             if line[0] in boolean_keywords or line[0] in unary_keywords:
                 Boolean(line)
-                print(line)
+                #print(line)
 
-    # print(symbol_table)
+    #for updating of symbol/lexeme table using operator lists above
+    for element in lexemes_table:
+        if element.lexeme == "AN":
+            element.type = "Operand Separator"
+        elif element.lexeme in arithmetic_keywords:
+            element.type = "Arithmetic Operator"
+        elif element.lexeme in comparison_keywords:
+            element.type = "Comparison Operator"
+        elif element.lexeme in boolean_keywords or element.lexeme in unary_keywords:
+            element.type = "Boolean Operator"
+        elif element.lexeme in infinite_keywords:
+            element.type = "Infinite Arity Keywords"
+
+    #check the lexeme table (tokens table talaga sya)
+    for i in range(len(lexemes_table)):
+      print([lexemes_table[i].lexeme, lexemes_table[i].type])
+
+    print()
+    print(symbol_table)
 
     # print(checkVar("var1"))
 
-    return symbol_table
+    return symbol_table, lexemes_table
 
 def checkInt(string):
-    try:
-        int(string)
+    if re.match(r"^-{0,1}[0-9]{1,}$", string):
         return True
-    except ValueError:
+    else:
         return False
     
 def checkFloat(string):
-    try:
-        float(string)
+    if re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", string):
         return True
-    except ValueError:
+    else:
         return False
 
+
 def checkVar(string):
-    if re.match(r"^[a-zA-Z]{1}([a-zA-Z0-9_])*", string):
+    if re.match(r"^[A-z]{1}([A-z0-9_])*", string):
         return True
     else:
         return False
 
 def checkBoolean(string):
-    if string == "WIN":
+    if string == "WIN" or string == "FAIL":
         return True
-    if string == "FAIL":
-        return True
-    return False
+    else:
+        return False
 
 # credits to https://stackoverflow.com/a/40775654
 def evaluate(nested_list):
@@ -292,21 +396,28 @@ def Comparison(line):
         for j in range(0, len(line)):
             if line[j] == "AN":
                 if isinstance(line[j-1], str) and isinstance(line[j+1], str):
+
                     if (line[j-1] in comparison_keywords or line[j-1] in arithmetic_keywords) and (line[j+1] in comparison_keywords or line[j+1] in arithmetic_keywords):
                         continue
                     elif (line[j-1] not in comparison_keywords or line[j-1] not in arithmetic_keywords) and (line[j+1] in comparison_keywords or line[j+1] in arithmetic_keywords):
                         continue
                     elif (line[j-1] in comparison_keywords or line[j-1] in arithmetic_keywords) and (line[j+1] not in comparison_keywords or line[j+1] not in arithmetic_keywords):
                         continue
+
                     elif (line[j-1] not in comparison_keywords or line[j-1] not in arithmetic_keywords) and (line[j+1] not in comparison_keywords or line[j+1] not in arithmetic_keywords):
-                        comparison_counter -= 1
-                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                        line[j-2] = new_grouping
-                        line.pop(j-1)
-                        line.pop(j-1)
-                        line.pop(j-1)
-                        break
-                    print(line)
+
+                        if (checkInt(line[j - 1]) or checkFloat(line[j - 1]) or checkVar(line[j - 1])) and (
+                                checkInt(line[j + 1]) or checkFloat(line[j + 1]) or checkVar(line[j - 1])):
+
+                            comparison_counter -= 1
+                            new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                            line[j-2] = new_grouping
+                            line.pop(j-1)
+                            line.pop(j-1)
+                            line.pop(j-1)
+                            break
+                        print(line)
+
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
                     if line[j+1] in comparison_keywords or line[j+1] in arithmetic_keywords:
                         continue
@@ -318,6 +429,7 @@ def Comparison(line):
                         line.pop(j-1)
                         line.pop(j-1)
                         break
+
                 elif isinstance(line[j-1], str) and isinstance(line[j+1], list):
                     if line[j-1] in comparison_keywords or line[j-1] in arithmetic_keywords:
                         continue
@@ -329,6 +441,7 @@ def Comparison(line):
                         line.pop(j-1)
                         line.pop(j-1)
                         break                                    
+
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], list):
                     comparison_counter -= 1
                     new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
@@ -337,7 +450,7 @@ def Comparison(line):
                     line.pop(j-1)
                     line.pop(j-1)
                     break
-    print(line)
+    #print(line)
 
 def Boolean(line):
     boolean_counter = 0
@@ -367,7 +480,7 @@ def Boolean(line):
                     elif line[j-1] in boolean_keywords and line[j+1] not in boolean_keywords:
                         continue
                     elif line[j-1] not in boolean_keywords and line[j+1] not in boolean_keywords:
-                        if checkBoolean(line[j-1]) and checkBoolean(line[j+1]):
+                        if (checkBoolean(line[j-1]) or checkVar(line[j-1])) and (checkBoolean(line[j+1]) or checkVar(line[j+1])):
                             boolean_counter -= 1
                             new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
                             line[j-2] = new_grouping
@@ -438,9 +551,7 @@ HAI
       VISIBLE "ano na"
       VISIBLE IT
     OIC
-
 KTHXBYE
-
 '''
 
 code6 = '''
@@ -448,7 +559,6 @@ BTW for if-else statements
 HAI
   I HAS A a ITZ 12
   I HAS A b ITZ 5
-
   BOTH SAEM 18 AN SUM OF 12 AN b
   O RLY?
     YA RLY
@@ -464,15 +574,12 @@ HAI
       DIFFRINT b AN SUM OF 12 AN b
       VISIBLE IT
   OIC
-
 KTHXBYE
-
 '''
 
 code5 = '''
 BTW test case for variables
 HAI
-
   BTW variable declarations
   BTW initialization of literal values
   I HAS A var1
@@ -483,21 +590,19 @@ HAI
   
   BTW initialization of variable using variable
   I HAS A var6 ITZ var2
-
   BTW initialization of variable using expressions
   I HAS A var7 ITZ DIFF OF 1 AN 2
-  I HAS A var8 ITZ QUOSHUNT OF 144 AN SUM OF 3 AN 9
+  I HAS A var8 ITZ QUOSHUNT OF 14 AN SUM OF 3 AN 9
   I HAS A var9 ITZ DIFFRINT 1 AN 1
   I HAS A var10 ITZ DIFFRINT 2 AN 1
   I HAS A var11 ITZ NOT WIN
-
+  
   BTW printing for validation
   OBTW
     if your interpreter cannot print variables
     but can support variables,
     make sure that the values are updated in the symbol table
   TLDR
-
   BTW VISIBLE var1  // cannot be printed coz NOOB
   VISIBLE var2
   VISIBLE var3
@@ -509,9 +614,7 @@ HAI
   VISIBLE var9
   VISIBLE var10
   VISIBLE var11
-
 KTHXBYE
-
 '''
 
 code = '''BTW for arithmetic operations
@@ -520,7 +623,6 @@ HAI
         if your interpreter does not implement IT,
         move the expressions to the VISIBLE statement
     TLDR
-
     PRODUKT OF 1 AN 2
     VISIBLE IT
     QUOSHUNT OF 1.0 AN 2
@@ -531,17 +633,14 @@ HAI
     VISIBLE IT
     SMALLR OF 1 AN 2
     VISIBLE IT
-
     BTW compound expressions
     SUM OF PRODUKT OF 3 AN 5 AN BIGGR OF DIFF OF 17 AN 2 AN 5
     VISIBLE IT
     BIGGR OF PRODUKT OF 11 AN 2 AN QUOSHUNT OF SUM OF 3 AN 5 AN 2
     VISIBLE IT
-
     BTW arithmetic with variables
     I HAS A var1 ITZ 5
     I HAS A var2 ITZ 3
-
     DIFF OF var2 AN var1
     VISIBLE IT
     MOD OF var2 AN var1
@@ -550,7 +649,6 @@ HAI
     VISIBLE IT
     SUM OF var1 AN 12.0
     VISIBLE IT
-
 KTHXBYE
 '''
 
@@ -571,29 +669,24 @@ HAI
   var2 R "seventeen"
   var3 R FAIL
   var4 R 2.18
-
   BTW printing...
   VISIBLE var1
   VISIBLE var2
   VISIBLE var3
   VISIBLE var4
-
   BTW assignment of expressions
   var5 R PRODUKT OF 1 AN 7
   var6 R WON OF WIN AN FAIL
   var7 R BOTH SAEM var1 AN var2
   var8 R EITHER OF FAIL AN FAIL
-
   BTW IT!!!!
   IT R "am IT"
-
   BTW printing...
   VISIBLE var5
   VISIBLE var6
   VISIBLE var7
   VISIBLE var8
   VISIBLE IT
-
 KTHXBYE
 '''
 code3 = '''
@@ -614,7 +707,6 @@ HAI
   VISIBLE IT
   ANY OF WIN AN WIN AN WIN AN FAIL AN WIN
   VISIBLE IT
-
   BTW compound expressions
   BOTH OF NOT WIN AN NOT WIN
   VISIBLE IT
@@ -624,7 +716,6 @@ HAI
   VISIBLE IT
   ALL OF WIN AN BOTH OF WIN AN NOT FAIL AN WIN AN WON OF WIN AN NOT WIN
   VISIBLE IT
-
   BTW with variables
   I HAS A var1 ITZ WIN
   I HAS A var2 ITZ FAIL
@@ -633,7 +724,6 @@ HAI
   VISIBLE IT
   ALL OF var1 AN WIN AN WIN AN var2 AN WIN
   VISIBLE IT
-
 KTHXBYE
 '''
 
@@ -651,7 +741,6 @@ HAI
   VISIBLE IT
   DIFFRINT 4 AN 4
   VISIBLE IT
-
   BTW compound expressions
   DIFFRINT 2 AN BIGGR OF 1 AN 2
   VISIBLE IT
@@ -659,50 +748,45 @@ HAI
   VISIBLE IT
   DIFFRINT BOTH SAEM 1 AN 2 AN DIFFRINT 1 AN 2
   VISIBLE IT
-
   BTW with variables
   I HAS A var1 ITZ WIN
   I HAS A var2 ITZ FAIL
-
   DIFFRINT var1 AN var2
   VISIBLE IT
   BOTH SAEM var1 AN var2
   VISIBLE IT
   DIFFRINT BOTH SAEM var1 AN var2 AN DIFFRINT var1 AN var1
   VISIBLE IT
-
 KTHXBYE
 '''
 
 code8 = '''
 BTW for USER INPUT/OUTPUT
 HAI
-
   BTW printing of literals
   VISIBLE "henlo"
   VISIBLE 17
   VISIBLE 1.7
   VISIBLE WIN
-
   BTW infinite arity printing (concat)
   VISIBLE "hi, I'm pi. My value is " 3.14
   VISIBLE "brrr " "baaa " "fa la la," " la la"
-
   BTW printing of expressions
   VISIBLE SUM OF 2 AN PRODUKT OF 3 AN 5
   VISIBLE BOTH SAEM 2 AN 3
   VISIBLE EITHER OF WIN AN FAIL
-
   BTW printing of variables and use of GIMMEH
   I HAS A input 
   VISIBLE "gif imput "
   GIMMEH input
   VISIBLE input
   VISIBLE "u gif meh " input "!"
-
 KTHXBYE
-
 '''
 
-symbol_table = lexical_analyzer3.LexicalAnalyzer(code8)
-SyntaxAnalyzer(symbol_table)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code4l)
+
+SyntaxAnalyzer(symbol_table, lexemes_table)
+
+for i in legit_symbol_table:
+    print(i)
