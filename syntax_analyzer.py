@@ -7,11 +7,14 @@ unary_keywords = ["NOT"]
 infinite_keywords = ["ALL OF", "ANY OF"]
 io_keywords = ["VISIBLE", "GIMMEH"]
 
-legit_symbol_table = []
+
+
 
 
 def SyntaxAnalyzer(symbol_table, lexemes_table):
 
+    line_table_without_groupings = copy.deepcopy(symbol_table)
+    legit_symbol_table = []
     obtw_flag = False
     
     orly_flag = False
@@ -82,18 +85,21 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                     new_variable[1] = "NOOB"
 
                 if len(line) == 4:
+                    print(line)
                     print("NASA 4 AKO")
                     new_variable[2] = line[3]
-
+                    print(new_variable[2])
                     if isinstance(new_variable[2], list):
                         if new_variable[2][0] in arithmetic_keywords:
                             floatflag = 0
+                            print("dito po ako")
                             for items in temp:
                                 if checkFloat(items):
                                     print("ETO PO YUNG FLOAT")
                                     print(items)
                                     # may float
                                     floatflag = 1
+                                    break
                             if floatflag == 1:
                                 new_variable[1] = 'NUMBAR'
                             else:
@@ -102,19 +108,26 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                         elif new_variable[2][0] in comparison_keywords or new_variable[2][0] in boolean_keywords or new_variable[2][0] in unary_keywords:
                             new_variable[1] = "TROOF"
 
+
                     for element in lexemes_table:
+                        print(element.lexeme)
                         if element.lexeme == new_variable[2]:
+                            print("pumasok naman")
                             # string example "YARN LITERAL"
                             store_list = element.type.split()
                             # get only YARN
                             new_variable[1] = store_list[0]
+                            break
 
                 legit_symbol_table.append(new_variable)
+                print(legit_symbol_table)
                 # print(line)
 
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w assignment statements
             if len(line) > 1:
+                print("pumasok dito")
+                print(line)
                 if line[1] == "R":
 
 
@@ -253,6 +266,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w comparison
             if line[0] in comparison_keywords:
+                print("nandito ako")
                 Comparison(line)
                 #print(line)
             
@@ -284,7 +298,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
     # print(checkVar("var1"))
 
-    return symbol_table, lexemes_table
+    return symbol_table, lexemes_table, legit_symbol_table,line_table_without_groupings
 
 def checkInt(string):
     if re.match(r"^-{0,1}[0-9]{1,}$", string):
@@ -300,7 +314,7 @@ def checkFloat(string):
 
 
 def checkVar(string):
-    if re.match(r"^[A-z]{1}([A-z0-9_])*", string):
+    if re.match(r"[a-zA-Z]{1}[a-zA-Z0-9_]*", string):
         return True
     else:
         return False
@@ -346,7 +360,7 @@ def Arithmetic(line):
                     elif line[j-1] in arithmetic_keywords and line[j+1] not in arithmetic_keywords:
                         continue
                     elif line[j-1] not in arithmetic_keywords and line[j+1] not in arithmetic_keywords:
-                        if (checkInt(line[j-1]) or checkFloat(line[j-1]) or checkVar(line[j-1])) and (checkInt(line[j+1]) or checkFloat(line[j+1]) or checkVar(line[j-1])):
+                        if (checkInt(line[j-1]) or checkFloat(line[j-1]) or checkVar(line[j-1])) and (checkInt(line[j+1]) or checkFloat(line[j+1]) or checkVar(line[j+1])):
                             arithmetic_counter -= 1
                             new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
                             line[j-2] = new_grouping
@@ -407,7 +421,7 @@ def Comparison(line):
                     elif (line[j-1] not in comparison_keywords or line[j-1] not in arithmetic_keywords) and (line[j+1] not in comparison_keywords or line[j+1] not in arithmetic_keywords):
 
                         if (checkInt(line[j - 1]) or checkFloat(line[j - 1]) or checkVar(line[j - 1])) and (
-                                checkInt(line[j + 1]) or checkFloat(line[j + 1]) or checkVar(line[j - 1])):
+                                checkInt(line[j + 1]) or checkFloat(line[j + 1]) or checkVar(line[j + 1])):
 
                             comparison_counter -= 1
                             new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
@@ -416,6 +430,11 @@ def Comparison(line):
                             line.pop(j-1)
                             line.pop(j-1)
                             break
+                        else:
+                            #print("Invalid input")
+                            comparison_counter -= 1
+                            break
+                        print("hello")
                         print(line)
 
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
@@ -784,9 +803,8 @@ HAI
 KTHXBYE
 '''
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code4l)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code2)
 
 SyntaxAnalyzer(symbol_table, lexemes_table)
 
-for i in legit_symbol_table:
-    print(i)
+
