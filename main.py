@@ -14,6 +14,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import lexical_analyzer3 as la, semantics_analyzer as sea, syntax_analyzer as sya, re
 
+import os,sys
+from pathlib import Path
+
 running = True
 current_line = 0
 lexemes = ""
@@ -94,7 +97,7 @@ class Ui_MainWindow(object):
 
         self.execute_button.clicked.connect(self.execute_clicked)
         self.user_input_submit.clicked.connect(self.user_input_clicked)
-        # self.user_input_submit.clicked.connect(self.execute_clicked)
+        self.actionOpen.triggered.connect(self.file_dialog_open)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -185,7 +188,6 @@ class Ui_MainWindow(object):
                 i = current_line
                 # checks if empty yung text box ehe
                 if len(lexemes[0][i]) != 0:
-                    print("current lexeme:", lexemes[0][i])
                     # checks if may naencounter na VISIBLE, and ipprint yung laman nya
                     if lexemes[0][i][0] == "VISIBLE":
                         line_to_be_printed = ""
@@ -228,6 +230,17 @@ class Ui_MainWindow(object):
             finished_flag = True
             current_line = 0
             initialized_flag = False
+
+    def file_dialog_open(self, MainWindow):
+        home_dir = str(os.path.dirname(os.path.abspath(__file__)))
+        fname = QtWidgets.QFileDialog.getOpenFileName(None, 'Open File', home_dir)
+
+        if fname[0]:
+            f = open(fname[0], 'r')
+            QtWidgets.QPlainTextEdit.clear(self.code_input)
+            with f:
+                code = f.read()
+                self.code_input.appendPlainText(code)
 
 if __name__ == "__main__":
     import sys
