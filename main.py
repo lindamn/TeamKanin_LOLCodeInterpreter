@@ -12,7 +12,7 @@
 # run as usual :>
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import lexical_analyzer3 as la, semantics_analyzer as sea, syntax_analyzer as sya
+import lexical_analyzer3 as la, semantics_analyzer as sea, syntax_analyzer as sya, re
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -96,12 +96,14 @@ class Ui_MainWindow(object):
 
     def execute_clicked(self, MainWindow):
 
+        # clears the tables bago simulan yung pagaanalyze
         while self.lexemes_list.rowCount() > 0:
             self.lexemes_list.removeRow(0)
 
         while self.symboltable_list.rowCount() > 0:
             self.symboltable_list.removeRow(0)
 
+        # code para sa lexical analyzer
         code = self.code_input.toPlainText()
         lexemes = la.LexicalAnalyzer(code)
 
@@ -110,6 +112,7 @@ class Ui_MainWindow(object):
             self.lexemes_list.setItem(i,0,QtWidgets.QTableWidgetItem(lexemes[1][i].lexeme))
             self.lexemes_list.setItem(i,1,QtWidgets.QTableWidgetItem(lexemes[1][i].type))
         
+        #code para sa syntax analyzer
         symbol_table = sya.SyntaxAnalyzer(lexemes[0],lexemes[1])
 
         for i in range(0, len(symbol_table[2])):
@@ -119,6 +122,34 @@ class Ui_MainWindow(object):
                 self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem(symbol_table[2][i][2]))
             else:
                 self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem("to be evaluated"))
+        
+        # dito yung code para sa VISIBLE
+        for i in range(0, len(lexemes[0])):
+            # checks if empty yung text box ehe
+            if lexemes[0][i] != 0:
+                if lexemes[0][i][0] == "VISIBLE":
+                    line_to_be_printed = ""
+                    for j in range(1, len(lexemes[0][i])):
+                        if isinstance(lexemes[0][i][1], str):
+                            # if string
+                            if re.match(r"[\"]([^\"]*?)[\"]", lexemes[0][i][j]):
+                                line_to_be_printed = line_to_be_printed + lexemes[0][i][j][1:-1]
+                            # if integer/float/boolean
+                            elif re.match(r"^-{0,1}[0-9]{1,}$", lexemes[0][i][j]) or re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", lexemes[0][i][j]) or lexemes[0][i][j] == "WIN" or lexemes[0][i][j] == "FAIL":
+                                line_to_be_printed = line_to_be_printed + lexemes[0][i][j]
+                            # if variable
+                            else:
+                                for k in range(0, len(symbol_table[2])):
+                                    if lexemes[0][i][j] == symbol_table[2][k][0]:
+                                        line_to_be_printed = line_to_be_printed + str(symbol_table[2][k][2])
+                                        break
+                                # line_to_be_printed = line_to_be_printed + "Does not exist inside symbol table"
+                        else:
+                            line_to_be_printed = line_to_be_printed + "wala pa (ieevaluate pa lang)"
+                            # self.code_output.append("wala pa (ieevaluate pa lang)")
+                    self.code_output.append(line_to_be_printed)
+
+        
 
 if __name__ == "__main__":
     import sys
@@ -130,3 +161,64 @@ if __name__ == "__main__":
 
     sys.exit(app.exec_())
 
+code2 = '''
+BTW for assignment to variables
+HAI
+  I HAS A var1
+  I HAS A var2
+  I HAS A var3
+  I HAS A var4
+  I HAS A var5
+  I HAS A var6
+  I HAS A var7
+  I HAS A var8
+  
+  BTW assignment of literals
+  var1 R 17
+  var2 R "seventeen"
+  var3 R FAIL
+  var4 R 2.18
+  BTW printing...
+  VISIBLE var1
+  VISIBLE var2
+  VISIBLE var3
+  VISIBLE var4
+  BTW assignment of expressions
+  var5 R PRODUKT OF 1 AN 7
+  var6 R WON OF WIN AN FAIL
+  var7 R BOTH SAEM var1 AN var2
+  var8 R EITHER OF FAIL AN FAIL
+  BTW IT!!!!
+  IT R "am IT"
+  BTW printing...
+  VISIBLE "var5"
+  VISIBLE var6
+  VISIBLE var7
+  VISIBLE var8
+  VISIBLE IT
+KTHXBYE
+'''
+
+code5 = '''
+BTW for USER INPUT/OUTPUT
+HAI
+  BTW printing of literals
+  VISIBLE "henlo"
+  VISIBLE 17
+  VISIBLE 1.7
+  VISIBLE WIN
+  BTW infinite arity printing (concat)
+  VISIBLE "hi, I'm pi. My value is " 3.14
+  VISIBLE "brrr " "baaa " "fa la la," " la la"
+  BTW printing of expressions
+  VISIBLE SUM OF 2 AN PRODUKT OF 3 AN 5
+  VISIBLE BOTH SAEM 2 AN 3
+  VISIBLE EITHER OF WIN AN FAIL
+  BTW printing of variables and use of GIMMEH
+  I HAS A input 
+  VISIBLE "gif imput "
+  GIMMEH input
+  VISIBLE input
+  VISIBLE "u gif meh " input "!"
+KTHXBYE
+'''
