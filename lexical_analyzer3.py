@@ -18,6 +18,7 @@ def LexicalAnalyzer(code):
 
     symbol_table = []
 
+
     # splits the lines by spaces
     for i in range(0, len(lines)):
         if re.search("VISIBLE",lines[i]) and re.search("\s{2,}V", lines[i]) or re.search(r"[A-z]{1}([A-z0-9_])*\sR\s", lines[i]):      #eto lang yung nabago mami
@@ -160,29 +161,39 @@ def LexicalAnalyzer(code):
                             break                            
     
     # print(symbol_table)
-    
+
+    #try naten tanggalin comments sa symbol_table
+    for line in symbol_table:
+      if line != [] and line[0] == 'BTW':
+        symbol_table.pop(symbol_table.index(line))
+
+      btwIndex = False
+      for i in range(len(line)):
+        if line[i] == 'BTW':
+          btwIndex = i
+          break
+      if btwIndex:
+        print("btw index is: ", btwIndex)
+        print("this is the line: ", line)
+        while len(line) != btwIndex:
+          line.pop(-1)
+
     #adds all lexemes in the symbol table
     lexemes_table = []
-    
-    obtw_flag = False
-    tldr_flag = False
+
+    for line in symbol_table:
+      print("next line",line)
+      if line == ['OBTW']:
+        print("obtw")
+        index = symbol_table.index(line)
+        symbol_table.pop(index)
+        while symbol_table[index] != ['TLDR']:
+          symbol_table.pop(index)
+        symbol_table.pop(index)
+        
 
     for line in range(len(symbol_table)):
-      if symbol_table[line] == ['OBTW']:
-        obtw_flag = True
-        continue
-      elif symbol_table[line] == ['TLDR']:
-        tldr_flag = True
-        continue
-      elif obtw_flag and not tldr_flag:
-        continue
-      elif obtw_flag and tldr_flag:       #after multiline comment
-        obtw_flag = False
-        tldr_flag = False
-
       for i in range(len(symbol_table[line])):
-        if symbol_table[line][0] == "BTW":        #if single line comment, ignore the rest of the line
-          break
         lexemes_table.append(SymbolTableElement(symbol_table[line][i]))
 
     #adds the type of lexemes (for tokens)
@@ -228,7 +239,11 @@ def LexicalAnalyzer(code):
       elif re.match(r"^[A-z]{1}([A-z0-9_])*", element.lexeme) :
         element.type = "Variable Identifier"
 
-    #print(symbol_table)
+    for i in range(len(lexemes_table)):
+      print([lexemes_table[i].lexeme, lexemes_table[i].type])
+
+    print()
+    print(symbol_table)
     return symbol_table, lexemes_table
 
 code5 = '''
@@ -267,7 +282,7 @@ HAI
     VISIBLE IT
     MOD OF 1 AN 2
     VISIBLE IT
-    BIGGR OF 1 AN 2
+    BIGGR OF 1 AN 2   BTW this is a comment
     VISIBLE IT
     SMALLR OF 1 AN 2
     VISIBLE IT
@@ -398,4 +413,4 @@ HAI
   VISIBLE IT
 KTHXBYE
 '''
-#LexicalAnalyzer(code)
+LexicalAnalyzer(code)
