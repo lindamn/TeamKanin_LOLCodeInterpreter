@@ -93,6 +93,14 @@ def evaluateComparison(nested_list,legit_symbol_table):
         "BIGGR OF":max,
         "SMALLR OF":min
     }
+
+    '''if isinstance(operand1, list) and operand1[0] in arithmetic_keywords:
+        print("here1")
+        operand1 = evaluate(operand1, legit_symbol_table)
+    if isinstance(operand2, list) and operand2[0] in arithmetic_keywords:
+        print("here2")
+        operand2 = evaluate(operand2, legit_symbol_table)'''
+
     return ops[op](evaluateComparison(operand1,legit_symbol_table), evaluateComparison(operand2,legit_symbol_table))
 
 
@@ -171,6 +179,39 @@ def evaluateNot(nested_list,legit_symbol_table):
     }
     return ops[op](evaluateComparison(operand1,legit_symbol_table))
 
+def evaluateInfinite(list, legit_symbol_table):
+    if list[0] == "ALL OF":
+        failPresent = False
+        for elem in list:
+            if elem == 'AN' or elem == "ALL OF":
+                continue
+            else:
+                if elem == "FAIL":
+                    failPresent = True
+                    break
+                elif isinstance(elem, list):
+                    if not evaluateBoolean(elem, legit_symbol_table):
+                        failPresent = True
+                        break
+        if failPresent:
+            return False
+        return True
+    else:
+        winPresent = False
+        for elem in list:
+            if elem == 'AN' or elem == "ANY OF":
+                continue
+            else:
+                if elem == "WIN":
+                    winPresent = True
+                    break
+                elif isinstance(elem, list):
+                    if not evaluateBoolean(elem, legit_symbol_table):
+                        winPresent = True
+                        break
+        if not winPresent:
+            return False
+        return True 
 
 def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_without_groupings):
 
@@ -256,6 +297,19 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                     for elem in legit_symbol_table:
                         if elem[0] == "IT":
                             value = evaluateNot(symbol_table[line][0], legit_symbol_table)
+                            if value:
+                                elem[2] = "WIN"
+                            else:
+                                elem[2] = "FAIL"
+                            elem[1] = "TROOF"
+                    print(legit_symbol_table)
+                    print(value)
+
+                elif symbol_table[line][0][0] in infinite_keywords:
+
+                    for elem in legit_symbol_table:
+                        if elem[0] == "IT":
+                            value = evaluateInfinite(symbol_table[line][0], legit_symbol_table)
                             if value:
                                 elem[2] = "WIN"
                             else:
@@ -505,7 +559,7 @@ HAI
   VISIBLE IT
   DIFFRINT BIGGR OF 1 AN 2 AN SMALLR OF 3 AN 2
   VISIBLE IT
-  DIFFRINT BOTH SAEM 1 AN 2 AN DIFFRINT 1 AN 2
+  DIFFRINT BOTH SAEM OF 1 AN 2 AN DIFFRINT 1 AN 2
   VISIBLE IT
   BTW with variables
   I HAS A var1 ITZ WIN
@@ -545,7 +599,7 @@ KTHXBYE
 '''
 
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code6)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code4)
 
 symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
 

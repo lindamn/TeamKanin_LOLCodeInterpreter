@@ -58,6 +58,12 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 elif line[1] in boolean_keywords:
                     Boolean(line)
 
+
+            if line[0] == "ALL OF" or line[0] == "ANY OF":
+                for element in line:
+                    if element in boolean_keywords or element in unary_keywords:
+                        Boolean(line)
+
             #deals w variable initialization
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             # variable_regex = "^[a-Z]{1}([a-Z0-9_])*"
@@ -296,6 +302,10 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
     print()
     print(symbol_table)
 
+    print()
+    for elem in symbol_table:
+        print(elem)
+
     # print(checkVar("var1"))
 
     return symbol_table, lexemes_table, legit_symbol_table,line_table_without_groupings
@@ -499,19 +509,20 @@ def Boolean(line):
                     elif line[j-1] in boolean_keywords and line[j+1] not in boolean_keywords:
                         continue
                     elif line[j-1] not in boolean_keywords and line[j+1] not in boolean_keywords:
-                        if (checkBoolean(line[j-1]) or checkVar(line[j-1])) and (checkBoolean(line[j+1]) or checkVar(line[j+1])):
-                            boolean_counter -= 1
-                            new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                            line[j-2] = new_grouping
-                            line.pop(j-1)
-                            line.pop(j-1)
-                            line.pop(j-1)
-                            break
-                        else:
-                            print("Invalid inputs!")
-                            break
+                        if line[j-2] in boolean_keywords:
+                            if (checkBoolean(line[j-1]) or checkVar(line[j-1])) and (checkBoolean(line[j+1]) or checkVar(line[j+1])):
+                                boolean_counter -= 1
+                                new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                                line[j-2] = new_grouping
+                                line.pop(j-1)
+                                line.pop(j-1)
+                                line.pop(j-1)
+                                break
+                            else:
+                                print("Invalid inputs!")
+                                break
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
-                    if line[j+1] in boolean_keywords:
+                    if line[j+1] in boolean_keywords or line[j-2] not in boolean_keywords:
                         continue
                     else:
                         boolean_counter -= 1
@@ -522,7 +533,7 @@ def Boolean(line):
                         line.pop(j-1)
                         break
                 elif isinstance(line[j-1], str) and isinstance(line[j+1], list):
-                    if line[j-1] in boolean_keywords:
+                    if line[j-1] in boolean_keywords or line[j-2] not in boolean_keywords:
                         continue
                     else:
                         boolean_counter -= 1
@@ -533,13 +544,18 @@ def Boolean(line):
                         line.pop(j-1)
                         break                                    
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], list):
-                    boolean_counter -= 1
-                    new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
-                    line[j-2] = new_grouping
-                    line.pop(j-1)
-                    line.pop(j-1)
-                    line.pop(j-1)
-                    break
+                    if line[j-2] not in boolean_keywords:
+                        continue
+                    else:
+                        boolean_counter -= 1
+                        new_grouping = [line[j-2],line[j-1],line[j],line[j+1]]
+                        line[j-2] = new_grouping
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        line.pop(j-1)
+                        break
+        
+
     # print(line)
 
 code7 = '''
@@ -733,7 +749,7 @@ HAI
   VISIBLE IT
   WON OF BOTH OF WIN AN WIN AN EITHER OF WIN AN FAIL
   VISIBLE IT
-  ALL OF WIN AN BOTH OF WIN AN NOT FAIL AN WIN AN WON OF WIN AN NOT WIN
+  ANY OF WIN AN BOTH OF NOT FAIL AN NOT FAIL AN NOT WIN AN WON OF WIN AN NOT WIN MKAY
   VISIBLE IT
   BTW with variables
   I HAS A var1 ITZ WIN
@@ -803,7 +819,7 @@ HAI
 KTHXBYE
 '''
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code2)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code3)
 
 SyntaxAnalyzer(symbol_table, lexemes_table)
 

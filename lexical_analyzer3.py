@@ -173,8 +173,6 @@ def LexicalAnalyzer(code):
           btwIndex = i
           break
       if btwIndex:
-        print("btw index is: ", btwIndex)
-        print("this is the line: ", line)
         while len(line) != btwIndex:
           line.pop(-1)
 
@@ -182,9 +180,7 @@ def LexicalAnalyzer(code):
     lexemes_table = []
 
     for line in symbol_table:
-      print("next line",line)
       if line == ['OBTW']:
-        print("obtw")
         index = symbol_table.index(line)
         symbol_table.pop(index)
         while symbol_table[index] != ['TLDR']:
