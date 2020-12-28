@@ -235,11 +235,11 @@ def LexicalAnalyzer(code):
       elif re.match(r"^[A-z]{1}([A-z0-9_])*", element.lexeme) :
         element.type = "Variable Identifier"
 
-    for i in range(len(lexemes_table)):
+    '''for i in range(len(lexemes_table)):
       print([lexemes_table[i].lexeme, lexemes_table[i].type])
 
     print()
-    print(symbol_table)
+    print(symbol_table)'''
     return symbol_table, lexemes_table
 
 code5 = '''

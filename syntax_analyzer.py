@@ -63,6 +63,8 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 for element in line:
                     if element in boolean_keywords or element in unary_keywords:
                         Boolean(line)
+                lineIndex = symbol_table.index(line)
+                symbol_table[lineIndex] = [symbol_table[lineIndex]]
 
             #deals w variable initialization
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
@@ -126,7 +128,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                             break
 
                 legit_symbol_table.append(new_variable)
-                print(legit_symbol_table)
+                #print(legit_symbol_table)
                 # print(line)
 
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
@@ -296,13 +298,13 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
             element.type = "Infinite Arity Keywords"
 
     #check the lexeme table (tokens table talaga sya)
-    for i in range(len(lexemes_table)):
-      print([lexemes_table[i].lexeme, lexemes_table[i].type])
+    '''for i in range(len(lexemes_table)):
+      print([lexemes_table[i].lexeme, lexemes_table[i].type])'''
 
-    print()
-    print(symbol_table)
+    #print()
+    #print(symbol_table)
 
-    print()
+    #print()
     for elem in symbol_table:
         print(elem)
 

@@ -179,10 +179,10 @@ def evaluateNot(nested_list,legit_symbol_table):
     }
     return ops[op](evaluateComparison(operand1,legit_symbol_table))
 
-def evaluateInfinite(list, legit_symbol_table):
-    if list[0] == "ALL OF":
+def evaluateInfinite(infiList, legit_symbol_table):
+    if infiList[0] == "ALL OF":
         failPresent = False
-        for elem in list:
+        for elem in infiList:
             if elem == 'AN' or elem == "ALL OF":
                 continue
             else:
@@ -193,12 +193,18 @@ def evaluateInfinite(list, legit_symbol_table):
                     if not evaluateBoolean(elem, legit_symbol_table):
                         failPresent = True
                         break
+                elif sa.checkVar(elem):
+                    for el in legit_symbol_table:
+                        if el[0] == elem:
+                            if el[2] == "FAIL":
+                                failPresent = True
+                                break
         if failPresent:
             return False
         return True
     else:
         winPresent = False
-        for elem in list:
+        for elem in infiList:
             if elem == 'AN' or elem == "ANY OF":
                 continue
             else:
@@ -209,6 +215,12 @@ def evaluateInfinite(list, legit_symbol_table):
                     if not evaluateBoolean(elem, legit_symbol_table):
                         winPresent = True
                         break
+                elif sa.checkVar(elem):
+                    for el in legit_symbol_table:
+                        if el[0] == elem:
+                            if el[2] == "WIN":
+                                winPresent = True
+                                break
         if not winPresent:
             return False
         return True 
@@ -235,7 +247,7 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
 
                     print(value)
                     print("Pumasok dito")
-                    #print(symbol_table[line])
+                    print(symbol_table[line])
 
                 elif symbol_table[line][0][0] in comparison_keywords:
 
@@ -306,7 +318,6 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                     print(value)
 
                 elif symbol_table[line][0][0] in infinite_keywords:
-
                     for elem in legit_symbol_table:
                         if elem[0] == "IT":
                             value = evaluateInfinite(symbol_table[line][0], legit_symbol_table)
@@ -316,13 +327,161 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                 elem[2] = "FAIL"
                             elem[1] = "TROOF"
                     print(legit_symbol_table)
-                    print(value)
+                    print("eto yung value sa infi",value)
 
             else:
                 for el in legit_symbol_table:
                     if el[0] == "IT":
                         el[1] = "TROOF"
                         el[2] = "FAIL"
+
+            if symbol_table[line][0]=="VISIBLE":
+                if isinstance(symbol_table[line][1],list):
+
+                    if symbol_table[line][1][0] in arithmetic_keywords:
+
+                        for elem in legit_symbol_table:
+                            if elem[0] == "IT":
+                                value = evaluate(symbol_table[line][1], legit_symbol_table)
+                                elem[2] = value
+                                if isinstance(value, int):
+                                    elem[1] = "NUMBR"
+                                else:
+                                    elem[1] = "NUMBAR"
+
+                        print(value)
+                        print("Pumasok dito")
+                        # print(symbol_table[line])
+
+                    elif symbol_table[line][1][0] in comparison_keywords:
+
+                        flag = 0
+                        print("comparison")
+                        print("symbol table")
+                        print(symbol_table[line])
+                        for idx in range(len(line_table_without_groupings[line])):
+                            for el in legit_symbol_table:
+                                if line_table_without_groupings[line][idx] == el[0]:
+                                    if el[1] == "YARN Literal":
+                                        flag = 1
+                                    elif el[1] == "Variable Identifier":
+                                        for le in legit_symbol_table:
+                                            if el[0] == le[0]:
+                                                if le[1] == "YARN Literal":
+                                                    flag = 1
+                            print(line_table_without_groupings[line][idx])
+
+                        for elem in legit_symbol_table:
+                            if elem[0] == "IT":
+                                value = evaluateComparison(symbol_table[line][1], legit_symbol_table)
+                                if flag == 1:
+                                    elem[2] = "FAIL"
+                                else:
+                                    if value:
+                                        elem[2] = "WIN"
+                                    else:
+                                        elem[2] = "FAIL"
+
+                                elem[1] = "TROOF"
+
+                        print(legit_symbol_table)
+                        print(value)
+
+
+
+                    elif symbol_table[line][1][0] in boolean_keywords:
+
+                        print("symbol table")
+                        print(symbol_table[line])
+
+                        for elem in legit_symbol_table:
+                            if elem[0] == "IT":
+                                value = evaluateBoolean(symbol_table[line][1], legit_symbol_table)
+                                if value:
+                                    elem[2] = "WIN"
+                                else:
+                                    elem[2] = "FAIL"
+                                elem[1] = "TROOF"
+                        print(legit_symbol_table)
+                        print(value)
+
+                    elif symbol_table[line][1][0] in unary_keywords:
+
+                        for elem in legit_symbol_table:
+                            if elem[0] == "IT":
+                                value = evaluateNot(symbol_table[line][1], legit_symbol_table)
+                                if value:
+                                    elem[2] = "WIN"
+                                else:
+                                    elem[2] = "FAIL"
+                                elem[1] = "TROOF"
+                        print(legit_symbol_table)
+                        print(value)
+
+                elif len(symbol_table[line]) == 2:
+                    if symbol_table[line][1] not in arithmetic_keywords and symbol_table[line][1] not in comparison_keywords and symbol_table[line][1] not in boolean_keywords and symbol_table[line][1] not in infinite_keywords and symbol_table[line][1] not in unary_keywords and symbol_table[line][1] not in io_keywords:
+                        varflag = 0
+                        for ele in legit_symbol_table:
+                            if symbol_table[line][1] == ele[0]:
+                                storevalue = ele[2]
+                                print(ele[2])
+                                varflag = 1
+                                for le in legit_symbol_table:
+                                    if le[0] == "IT":
+                                        le[2] = storevalue
+                                        break
+
+                        if varflag == 0:
+                            for le in legit_symbol_table:
+                                if le[0] == "IT":
+                                    le[2] = symbol_table[line][1]
+                                    break
+
+
+                    else:
+                        print("NOT VALID. STATEMENT AFTER VISIBLE IS A KEYWORD")
+
+                elif len(symbol_table[line]) > 2:
+                    printstr = ""
+                    for idx in range(1,len(symbol_table[line])):
+                        if symbol_table[line][idx] not in arithmetic_keywords and symbol_table[line][idx] not in comparison_keywords and symbol_table[line][idx] not in boolean_keywords and symbol_table[line][idx] not in infinite_keywords and symbol_table[line][idx] not in unary_keywords and symbol_table[line][idx] not in io_keywords:
+                            varflag = 0
+                            for ele in legit_symbol_table:
+                                if symbol_table[line][idx] == ele[0]:
+                                    storevalue = ele[2]
+                                    print(ele[2])
+                                    if not storevalue == None:
+                                        printstr += storevalue
+                                    varflag = 1
+                                    # for le in legit_symbol_table:
+                                    #     if le[0] == "IT":
+                                    #         le[2] = storevalue
+                                    #         break
+
+                            if varflag == 0:
+                                if symbol_table[line][idx] == None:
+                                    print("no value yet")
+                                else:
+                                    printstr += symbol_table[line][idx]
+                                # for le in legit_symbol_table:
+                                #     if le[0] == "IT":
+                                #         le[2] = symbol_table[line][1]
+                                #         break
+
+
+                        else:
+                            print("NOT VALID. STATEMENT AFTER VISIBLE IS A KEYWORD")
+
+                        #printstr += symbol_table[line][idx]
+                    print("pumasok dito")
+                    print(printstr)
+                    for le in legit_symbol_table:
+                        if le[0] == "IT":
+                            le[2] = printstr
+                            break
+
+                print("nahanap visible")
+                print(symbol_table[line])
 
             print(legit_symbol_table)
 
@@ -599,7 +758,7 @@ KTHXBYE
 '''
 
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code4)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code3)
 
 symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
 
