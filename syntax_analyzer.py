@@ -76,35 +76,34 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 if len(line) > 4:
                     if line[3] in arithmetic_keywords:
                         Arithmetic(line)
-                        print(line)
-                        print("nasa arithmetic")
+                        #print(line)
+                        #print("nasa arithmetic")
                         #dito ilalagay
                     elif line[3] in comparison_keywords:
                         Comparison(line)
-                        print(line)
-                        print("nasa comparison")
+                        #print(line)
+                        #print("nasa comparison")
 
                     elif line[3] in boolean_keywords or line[3] in unary_keywords:
-                        print(line)
-                        print("NASA BOOLEAN!!!")
+                        #print(line)
+                        #print("NASA BOOLEAN!!!")
                         Boolean(line)
 
                 if len(line) == 2:
                     new_variable[1] = "NOOB"
 
                 if len(line) == 4:
-                    print(line)
-                    print("NASA 4 AKO")
+                    #print(line)
+                    #print("NASA 4 AKO")
                     new_variable[2] = line[3]
-                    print(new_variable[2])
+                    #print(new_variable[2])
                     if isinstance(new_variable[2], list):
                         if new_variable[2][0] in arithmetic_keywords:
                             floatflag = 0
-                            print("dito po ako")
                             for items in temp:
                                 if checkFloat(items):
-                                    print("ETO PO YUNG FLOAT")
-                                    print(items)
+                                    #print("ETO PO YUNG FLOAT")
+                                    #print(items)
                                     # may float
                                     floatflag = 1
                                     break
@@ -118,9 +117,9 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
 
                     for element in lexemes_table:
-                        print(element.lexeme)
+                        #print(element.lexeme)
                         if element.lexeme == new_variable[2]:
-                            print("pumasok naman")
+                            #print("pumasok naman")
                             # string example "YARN LITERAL"
                             store_list = element.type.split()
                             # get only YARN
@@ -134,8 +133,8 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w assignment statements
             if len(line) > 1:
-                print("pumasok dito")
-                print(line)
+                #print("pumasok dito")
+                #print(line)
                 if line[1] == "R":
 
 
@@ -446,8 +445,8 @@ def Comparison(line):
                             #print("Invalid input")
                             comparison_counter -= 1
                             break
-                        print("hello")
-                        print(line)
+                        #print("hello")
+                        #print(line)
 
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
                     if line[j+1] in comparison_keywords or line[j+1] in arithmetic_keywords:

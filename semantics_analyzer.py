@@ -41,6 +41,8 @@ def evaluate(nested_list,legit_symbol_table):
         "BIGGR OF":max,
         "SMALLR OF":min
     }
+
+
     return ops[op](evaluate(operand1,legit_symbol_table), evaluate(operand2,legit_symbol_table))
 
 
@@ -57,13 +59,9 @@ def XORoperator(op1, op2):
 
 
 def evaluateComparison(nested_list,legit_symbol_table):
-
-
     if isinstance(nested_list, str):
-
         #dito ichecheck kung valid ba yung format ng operands
         if sa.checkInt(nested_list) or sa.checkFloat(nested_list) or sa.checkVar(nested_list):
-
             if sa.checkVar(nested_list):
                 for elements in legit_symbol_table:
                     if nested_list == elements[0]:
@@ -84,8 +82,7 @@ def evaluateComparison(nested_list,legit_symbol_table):
                 return True
             elif nested_list=="FAIL":
                 return False
-
-
+    
     op, operand1, an, operand2 = nested_list
     ops = {
         "BOTH SAEM":operator.eq,
@@ -94,19 +91,16 @@ def evaluateComparison(nested_list,legit_symbol_table):
         "SMALLR OF":min
     }
 
-    '''if isinstance(operand1, list) and operand1[0] in arithmetic_keywords:
-        print("here1")
-        operand1 = evaluate(operand1, legit_symbol_table)
+    if isinstance(operand1, list) and operand1[0] in arithmetic_keywords:
+        operand1 = str(evaluate(operand1, legit_symbol_table))
     if isinstance(operand2, list) and operand2[0] in arithmetic_keywords:
-        print("here2")
-        operand2 = evaluate(operand2, legit_symbol_table)'''
+        operand2 = str(evaluate(operand2, legit_symbol_table))
 
     return ops[op](evaluateComparison(operand1,legit_symbol_table), evaluateComparison(operand2,legit_symbol_table))
 
 
 
 def evaluateBoolean(nested_list,legit_symbol_table):
-
     if isinstance(nested_list, str) or isinstance(nested_list,bool):
         if isinstance(nested_list,bool):
             print("Nested list")
@@ -152,8 +146,6 @@ def evaluateBoolean(nested_list,legit_symbol_table):
     return ops[op](evaluateBoolean(operand1,legit_symbol_table), evaluateBoolean(operand2,legit_symbol_table))
 
 def evaluateNot(nested_list,legit_symbol_table):
-
-
     if isinstance(nested_list, str):
 
         #dito ichecheck kung valid ba yung format ng operands
@@ -228,10 +220,9 @@ def evaluateInfinite(infiList, legit_symbol_table):
 def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_without_groupings):
 
     for line in range(len(symbol_table)):
-        #print("HELLLLLLLLLLLLLLLLLLLLLLLLLL")
-        #print(symbol_table[line][0])
-        print("marker")
+
         print(symbol_table[line])
+
         if symbol_table[line] != []:
             if isinstance(symbol_table[line][0],list):
                 if symbol_table[line][0][0] in arithmetic_keywords:
@@ -244,18 +235,13 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                 elem[1] = "NUMBR"
                             else:
                                 elem[1] = "NUMBAR"
-
-                    print(value)
-                    print("Pumasok dito")
-                    print(symbol_table[line])
+                    
+                    print(legit_symbol_table)
+                    print(">>>>>ARITHMETIC VALUE: ", value)
 
                 elif symbol_table[line][0][0] in comparison_keywords:
-
-
                     flag = 0
-                    print("comparison")
-                    print("symbol table")
-                    print(symbol_table[line])
+
                     for idx in range(len(line_table_without_groupings[line])):
                         for el in legit_symbol_table:
                             if line_table_without_groupings[line][idx] == el[0]:
@@ -266,8 +252,6 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                         if el[0] == le[0]:
                                             if le[1] == "YARN Literal":
                                                 flag = 1
-                        print(line_table_without_groupings[line][idx])
-
 
                     for elem in legit_symbol_table:
                         if elem[0] == "IT":
@@ -283,15 +267,10 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             elem[1] = "TROOF"
 
                     print(legit_symbol_table)
-                    print(value)
-
+                    print(">>>>>COMPARISON VALUE: ", value)
 
 
                 elif symbol_table[line][0][0] in boolean_keywords:
-
-
-                    print("symbol table")
-                    print(symbol_table[line])
 
                     for elem in legit_symbol_table:
                         if elem[0] == "IT":
@@ -302,7 +281,7 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                 elem[2] = "FAIL"
                             elem[1] = "TROOF"
                     print(legit_symbol_table)
-                    print(value)
+                    print(">>>>>BOOLEAN VALUE: ", value)
 
                 elif symbol_table[line][0][0] in unary_keywords:
 
@@ -315,7 +294,7 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                 elem[2] = "FAIL"
                             elem[1] = "TROOF"
                     print(legit_symbol_table)
-                    print(value)
+                    print(">>>>>UNARY VALUE: ",value)
 
                 elif symbol_table[line][0][0] in infinite_keywords:
                     for elem in legit_symbol_table:
@@ -326,8 +305,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             else:
                                 elem[2] = "FAIL"
                             elem[1] = "TROOF"
+                    
                     print(legit_symbol_table)
-                    print("eto yung value sa infi",value)
+                    print(">>>>>INFINITE VALUE: ",value)
 
             else:
                 for el in legit_symbol_table:
@@ -349,16 +329,17 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                 else:
                                     elem[1] = "NUMBAR"
 
-                        print(value)
-                        print("Pumasok dito")
+                        print(legit_symbol_table)
+                        print(">>>>>ARITHMETIC VALUE: ",value)
+                        #print("Pumasok dito")
                         # print(symbol_table[line])
 
                     elif symbol_table[line][1][0] in comparison_keywords:
 
                         flag = 0
-                        print("comparison")
-                        print("symbol table")
-                        print(symbol_table[line])
+                        #print("comparison")
+                        #print("symbol table")
+                        #print(symbol_table[line])
                         for idx in range(len(line_table_without_groupings[line])):
                             for el in legit_symbol_table:
                                 if line_table_without_groupings[line][idx] == el[0]:
@@ -385,9 +366,7 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                 elem[1] = "TROOF"
 
                         print(legit_symbol_table)
-                        print(value)
-
-
+                        print(">>>>>COMPARISON VALUE: ",value)
 
                     elif symbol_table[line][1][0] in boolean_keywords:
 
@@ -403,7 +382,7 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                     elem[2] = "FAIL"
                                 elem[1] = "TROOF"
                         print(legit_symbol_table)
-                        print(value)
+                        print(">>>>>BOOLEAN VALUE: ",value)
 
                     elif symbol_table[line][1][0] in unary_keywords:
 
@@ -416,7 +395,20 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                     elem[2] = "FAIL"
                                 elem[1] = "TROOF"
                         print(legit_symbol_table)
-                        print(value)
+                        print(">>>>>UNARY VALUE: ",value)
+
+                    elif symbol_table[line][1][0] in infinite_keywords:
+                        for elem in legit_symbol_table:
+                            if elem[0] == "IT":
+                                value = evaluateInfinite(symbol_table[line][0], legit_symbol_table)
+                                if value:
+                                    elem[2] = "WIN"
+                                else:
+                                    elem[2] = "FAIL"
+                                elem[1] = "TROOF"
+                        
+                        print(legit_symbol_table)
+                        print(">>>>>INFINITE VALUE: ",value)
 
                 elif len(symbol_table[line]) == 2:
                     if symbol_table[line][1] not in arithmetic_keywords and symbol_table[line][1] not in comparison_keywords and symbol_table[line][1] not in boolean_keywords and symbol_table[line][1] not in infinite_keywords and symbol_table[line][1] not in unary_keywords and symbol_table[line][1] not in io_keywords:
@@ -718,7 +710,7 @@ HAI
   VISIBLE IT
   DIFFRINT BIGGR OF 1 AN 2 AN SMALLR OF 3 AN 2
   VISIBLE IT
-  DIFFRINT BOTH SAEM OF 1 AN 2 AN DIFFRINT 1 AN 2
+  DIFFRINT SUM OF 1 AN 2 AN DIFF OF 1 AN 2
   VISIBLE IT
   BTW with variables
   I HAS A var1 ITZ WIN
