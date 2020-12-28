@@ -14,8 +14,17 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import lexical_analyzer3 as la, semantics_analyzer as sea, syntax_analyzer as sya, re
 
+running = True
+current_line = 0
+lexemes = ""
+symbol_table = ""
+initialized_flag = False
+finished_flag = True
+
 class Ui_MainWindow(object):
+
     def setupUi(self, MainWindow):
+        
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 599)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -28,7 +37,7 @@ class Ui_MainWindow(object):
         self.lexemes_label.setAlignment(QtCore.Qt.AlignCenter)
         self.lexemes_label.setObjectName("lexemes_label")
         self.code_output = QtWidgets.QTextBrowser(self.centralwidget)
-        self.code_output.setGeometry(QtCore.QRect(10, 310, 781, 241))
+        self.code_output.setGeometry(QtCore.QRect(10, 310, 781, 181))
         self.code_output.setObjectName("code_output")
         self.execute_button = QtWidgets.QPushButton(self.centralwidget)
         self.execute_button.setGeometry(QtCore.QRect(10, 280, 781, 23))
@@ -55,6 +64,16 @@ class Ui_MainWindow(object):
         self.symboltable_list.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
         self.symboltable_list.setHorizontalHeaderItem(1, item)
+        self.user_input = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.user_input.setGeometry(QtCore.QRect(10, 520, 371, 31))
+        self.user_input.setObjectName("user_input")
+        self.user_input_label = QtWidgets.QLabel(self.centralwidget)
+        self.user_input_label.setGeometry(QtCore.QRect(150, 490, 91, 31))
+        self.user_input_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.user_input_label.setObjectName("user_input_label")
+        self.user_input_submit = QtWidgets.QPushButton(self.centralwidget)
+        self.user_input_submit.setGeometry(QtCore.QRect(390, 520, 75, 31))
+        self.user_input_submit.setObjectName("user_input_submit")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -74,7 +93,8 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         self.execute_button.clicked.connect(self.execute_clicked)
-        # self.actionOpen.triggered.connect(self.openFileNameDialog)
+        self.user_input_submit.clicked.connect(self.user_input_clicked)
+        # self.user_input_submit.clicked.connect(self.execute_clicked)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -91,68 +111,127 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "Identifier"))
         item = self.symboltable_list.horizontalHeaderItem(1)
         item.setText(_translate("MainWindow", "Value"))
+        self.user_input_label.setText(_translate("MainWindow", "User Input"))
+        self.user_input_submit.setText(_translate("MainWindow", "Submit"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
+    
+    def user_input_clicked(self, MainWindow):
+        global running
+        global current_line
+        global lexemes
+        global symbol_table
+        global finished_flag
+
+        if finished_flag == False:
+            user_input = self.user_input.toPlainText()
+            # check if var is in symbol table
+            for j in range(0, len(symbol_table[2])):
+                if symbol_table[2][j][0] == lexemes[0][current_line][1]:
+                    symbol_table[2][j][2] = user_input
+                    self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(symbol_table[2][j][2]))
+                    break
+            current_line += 1
+            running = True
+            self.execute_clicked(MainWindow)
 
     def execute_clicked(self, MainWindow):
+        global running
+        global current_line
+        global lexemes
+        global symbol_table
+        global initialized_flag
+        global finished_flag
 
-        # clears the tables bago simulan yung pagaanalyze
-        while self.lexemes_list.rowCount() > 0:
-            self.lexemes_list.removeRow(0)
+        if initialized_flag == False and finished_flag == True:
+            # clears the tables bago simulan yung pagaanalyze
+            while self.lexemes_list.rowCount() > 0:
+                self.lexemes_list.removeRow(0)
 
-        while self.symboltable_list.rowCount() > 0:
-            self.symboltable_list.removeRow(0)
+            while self.symboltable_list.rowCount() > 0:
+                self.symboltable_list.removeRow(0)
 
-        # code para sa lexical analyzer
-        code = self.code_input.toPlainText()
-        lexemes = la.LexicalAnalyzer(code)
+            #clears the input/output text box
+            QtWidgets.QTextBrowser.clear(self.code_output)
+            QtWidgets.QPlainTextEdit.clear(self.user_input)
 
-        for i in range(0, len(lexemes[1])):
-            self.lexemes_list.insertRow(i)
-            self.lexemes_list.setItem(i,0,QtWidgets.QTableWidgetItem(lexemes[1][i].lexeme))
-            self.lexemes_list.setItem(i,1,QtWidgets.QTableWidgetItem(lexemes[1][i].type))
+            # takes text from code_input
+            code = self.code_input.toPlainText()
+            # code para sa lexical analyzer
+            lexemes = la.LexicalAnalyzer(code)
+
+            for i in range(0, len(lexemes[1])):
+                self.lexemes_list.insertRow(i)
+                self.lexemes_list.setItem(i,0,QtWidgets.QTableWidgetItem(lexemes[1][i].lexeme))
+                self.lexemes_list.setItem(i,1,QtWidgets.QTableWidgetItem(lexemes[1][i].type))
+            
+            #code para sa syntax analyzer
+            symbol_table = sya.SyntaxAnalyzer(lexemes[0],lexemes[1])
+
+            # ineedit lang yung symbol table
+            for i in range(0, len(symbol_table[2])):
+                self.symboltable_list.insertRow(i)
+                self.symboltable_list.setItem(i,0,QtWidgets.QTableWidgetItem(symbol_table[2][i][0]))
+                if isinstance(symbol_table[2][i][2], str):
+                    self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem(symbol_table[2][i][2]))
+                else:
+                    self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem("to be evaluated"))
+            initialized_flag = True
+            finished_flag = False
         
-        #code para sa syntax analyzer
-        symbol_table = sya.SyntaxAnalyzer(lexemes[0],lexemes[1])
-
-        for i in range(0, len(symbol_table[2])):
-            self.symboltable_list.insertRow(i)
-            self.symboltable_list.setItem(i,0,QtWidgets.QTableWidgetItem(symbol_table[2][i][0]))
-            if isinstance(symbol_table[2][i][2], str):
-                self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem(symbol_table[2][i][2]))
-            else:
-                self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem("to be evaluated"))
-        
-        # dito yung code para sa VISIBLE
-        for i in range(0, len(lexemes[0])):
-            # checks if empty yung text box ehe
-            if lexemes[0][i] != 0:
-                if lexemes[0][i][0] == "VISIBLE":
-                    line_to_be_printed = ""
-                    for j in range(1, len(lexemes[0][i])):
-                        if isinstance(lexemes[0][i][1], str):
-                            # if string
-                            if re.match(r"[\"]([^\"]*?)[\"]", lexemes[0][i][j]):
-                                line_to_be_printed = line_to_be_printed + lexemes[0][i][j][1:-1]
-                            # if integer/float/boolean
-                            elif re.match(r"^-{0,1}[0-9]{1,}$", lexemes[0][i][j]) or re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", lexemes[0][i][j]) or lexemes[0][i][j] == "WIN" or lexemes[0][i][j] == "FAIL":
-                                line_to_be_printed = line_to_be_printed + lexemes[0][i][j]
-                            # if variable
+        if running and current_line != len(lexemes[0]):
+            # dito yung code para sa VISIBLE/GIMMEH
+            while len(lexemes[0]) - current_line != 0:
+                i = current_line
+                # checks if empty yung text box ehe
+                if len(lexemes[0][i]) != 0:
+                    print("current lexeme:", lexemes[0][i])
+                    # checks if may naencounter na VISIBLE, and ipprint yung laman nya
+                    if lexemes[0][i][0] == "VISIBLE":
+                        line_to_be_printed = ""
+                        for j in range(1, len(lexemes[0][i])):
+                            if isinstance(lexemes[0][i][1], str):
+                                # if string
+                                if re.match(r"[\"]([^\"]*?)[\"]", lexemes[0][i][j]):
+                                    line_to_be_printed = line_to_be_printed + lexemes[0][i][j][1:-1]
+                                # if integer/float/boolean
+                                elif re.match(r"^-{0,1}[0-9]{1,}$", lexemes[0][i][j]) or re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", lexemes[0][i][j]) or lexemes[0][i][j] == "WIN" or lexemes[0][i][j] == "FAIL":
+                                    line_to_be_printed = line_to_be_printed + lexemes[0][i][j]
+                                # if variable
+                                else:
+                                    for k in range(0, len(symbol_table[2])):
+                                        if lexemes[0][i][j] == symbol_table[2][k][0]:
+                                            # if literal na yung laman sa symbol table
+                                            if isinstance(symbol_table[2][k][2], str):
+                                                #if string yung ipprint
+                                                if re.match(r"[\"]([^\"]*?)[\"]", symbol_table[2][k][2]):
+                                                    line_to_be_printed = line_to_be_printed + symbol_table[2][k][2][1:-1]
+                                                #if integer/float/troof
+                                                elif re.match(r"^-{0,1}[0-9]{1,}$", symbol_table[2][k][2]) or re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", symbol_table[2][k][2]) or symbol_table[2][k][2] == "WIN" or symbol_table[2][k][2] == "FAIL":
+                                                    line_to_be_printed = line_to_be_printed + symbol_table[2][k][2]
+                                            # if list/expression pa
+                                            else:
+                                                line_to_be_printed = line_to_be_printed + "wala pa (ieevaluate pa lang yung sa symbol table)"
+                                            break
                             else:
-                                for k in range(0, len(symbol_table[2])):
-                                    if lexemes[0][i][j] == symbol_table[2][k][0]:
-                                        line_to_be_printed = line_to_be_printed + str(symbol_table[2][k][2])
-                                        break
-                                # line_to_be_printed = line_to_be_printed + "Does not exist inside symbol table"
-                        else:
-                            line_to_be_printed = line_to_be_printed + "wala pa (ieevaluate pa lang)"
-                            # self.code_output.append("wala pa (ieevaluate pa lang)")
-                    self.code_output.append(line_to_be_printed)
+                                line_to_be_printed = line_to_be_printed + "wala pa (ieevaluate pa lang yung expression)"
+                        self.code_output.append(line_to_be_printed)
 
-        
+                    # checks if may naencounter na GIMMEH, and magaantay ng input sa user bago tumuloy
+                    if lexemes[0][i][0] == "GIMMEH":
+                        running = False
+                        break
+                current_line += 1
+                    
+        # if tapos na basahin ng program yung lexemes
+        if current_line == len(lexemes[0]):
+            finished_flag = True
+            current_line = 0
+            initialized_flag = False
 
 if __name__ == "__main__":
     import sys
+    
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
