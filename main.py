@@ -23,6 +23,9 @@ lexemes = ""
 symbol_table = ""
 initialized_flag = False
 finished_flag = True
+tokenized_flag = False
+syntactically_correct_flag = False
+final = ""
 
 class Ui_MainWindow(object):
 
@@ -125,17 +128,19 @@ class Ui_MainWindow(object):
         global lexemes
         global symbol_table
         global finished_flag
+        global final
 
         if finished_flag == False:
             user_input = self.user_input.toPlainText()
             # check if var is in symbol table
-            for j in range(0, len(symbol_table[2])):
-                if symbol_table[2][j][0] == lexemes[0][current_line][1]:
-                    symbol_table[2][j][2] = user_input
-                    self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(symbol_table[2][j][2]))
+            for j in range(0, len(final[3])):
+                if final[3][j][0] == lexemes[0][current_line][1]:
+                    final[3][j][2] = user_input
+                    self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(final[3][j][2]))
                     break
             current_line += 1
             running = True
+            print("i was clicked!")
             self.execute_clicked(MainWindow)
 
     def execute_clicked(self, MainWindow):
@@ -145,6 +150,9 @@ class Ui_MainWindow(object):
         global symbol_table
         global initialized_flag
         global finished_flag
+        global tokenized_flag
+        global syntactically_correct_flag
+        global final
 
         if initialized_flag == False and finished_flag == True:
             # clears the tables bago simulan yung pagaanalyze
@@ -160,15 +168,45 @@ class Ui_MainWindow(object):
 
             # takes text from code_input
             code = self.code_input.toPlainText()
-            # code para sa lexical analyzer
-            lexemes = la.LexicalAnalyzer(code)
+            if tokenized_flag == False:
+                # ieexecute and lexical analyzer
+                lexemes = la.LexicalAnalyzer(code)
+                
+                tokenized_flag = True
 
+<<<<<<< HEAD
+            # check lang if hindi line # yung nirereturn ni lexeme, if int yung nireturn ibig sabihin may maling token
             if not isinstance(lexemes, int):
+                
+=======
+            if not isinstance(lexemes, int):
+>>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
                 for i in range(0, len(lexemes[1])):
                     self.lexemes_list.insertRow(i)
                     self.lexemes_list.setItem(i,0,QtWidgets.QTableWidgetItem(lexemes[1][i].lexeme))
                     self.lexemes_list.setItem(i,1,QtWidgets.QTableWidgetItem(lexemes[1][i].type))
 
+<<<<<<< HEAD
+                #execute na yung syntax analyzer
+                if syntactically_correct_flag == False:
+                    symbol_table = sya.SyntaxAnalyzer(lexemes[0],lexemes[1])
+                    syntactically_correct_flag = True
+
+                # check lang if tama yung nirereturn ng syntax analyzer
+                if len(symbol_table) == 4:
+                    
+                    # initialize lang ng symbol table based sa syntax analyzer
+                    for i in range(0, len(symbol_table[2])):
+                        self.symboltable_list.insertRow(i)
+                        self.symboltable_list.setItem(i,0,QtWidgets.QTableWidgetItem(symbol_table[2][i][0]))
+                        if isinstance(symbol_table[2][i][2], str):
+                            self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem(symbol_table[2][i][2]))
+                        else:
+                            self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem("to be evaluated"))
+                    initialized_flag = True
+                    finished_flag = False
+
+=======
                     #code para sa syntax analyzer
                     symbol_table = sya.SyntaxAnalyzer(lexemes[0],lexemes[1])
 
@@ -231,13 +269,41 @@ class Ui_MainWindow(object):
                         finished_flag = True
                         current_line = 0
                         initialized_flag = False
+>>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
             else:
                 finished_flag = True
                 current_line = 0
                 initialized_flag = False
                 error_message = "LEXICAL ERROR AT LINE " + str(lexemes+1)
                 self.code_output.append(error_message)
+<<<<<<< HEAD
+                return
             
+        if tokenized_flag == True and syntactically_correct_flag == True:
+            #idadaan na sa semantics analyzer and ieexecute :>
+            final = sea.SemanticsAnalyzer(current_line,symbol_table[0],symbol_table[1],symbol_table[2],symbol_table[3])
+
+            current_line = final[1]
+            if running and current_line <= len(lexemes[0]):
+                print(final[0])
+                #pagprint ng VISIBLE lines
+                for j in range(0, len(final[0])):
+                    self.code_output.append(str(final[0][j]))
+                #pag-ayos ng symbol table
+                for j in range(0, len(final[3])):
+                    self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(str(final[3][j][2])))
+                        
+            # if tapos na basahin ng program yung lexemes
+            if current_line == len(lexemes[0]):
+                finished_flag = True
+                current_line = 0
+                initialized_flag = False
+                tokenized_flag = False
+                syntactically_correct_flag = False
+                
+=======
+            
+>>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
 
     def file_dialog_open(self, MainWindow):
         home_dir = str(os.path.dirname(os.path.abspath(__file__)))
