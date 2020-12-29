@@ -9,13 +9,10 @@ io_keywords = ["VISIBLE", "GIMMEH"]
 
 
 
-
-
 def SyntaxAnalyzer(symbol_table, lexemes_table):
 
     line_table_without_groupings = copy.deepcopy(symbol_table)
     legit_symbol_table = []
-    obtw_flag = False
     
     orly_flag = False
     yarly_flag = False
@@ -25,30 +22,16 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
     omg_flag = False
     omgwtf_flag = False
 
+    # implicit IT variable initialize
     it_variable = ["IT", "NOOB", None, None]
     legit_symbol_table.append(it_variable)
 
 
-    for i in range(0, len(symbol_table)):
-
-        line = symbol_table[i]
+    for line in symbol_table:
         temp = copy.deepcopy(line)
-        # print("current line:", line)
+
         if len(line) != 0:
-            # ignores comments
-            if line[0] == "TLDR":
-                obtw_flag = False
-            if obtw_flag == False:
-                if line[0] == "OBTW":
-                    obtw_flag = True
-                for j in range(0, len(line)):
-                    if line[j] == "BTW":
-                        # print("ignore (btw)")
-                        break
-            else:
-                # print("ignore (obtw)")
-                continue
-            
+
             #deals w output (visible)
             if line[0] == "VISIBLE":
                 if line[1] in arithmetic_keywords:
@@ -58,7 +41,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 elif line[1] in boolean_keywords:
                     Boolean(line)
 
-
+            #deals with infinite expressions
             if line[0] == "ALL OF" or line[0] == "ANY OF":
                 for element in line:
                     if element in boolean_keywords or element in unary_keywords:
@@ -67,44 +50,43 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 symbol_table[lineIndex] = [symbol_table[lineIndex]]
 
             #deals w variable initialization
-            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
-            # variable_regex = "^[a-Z]{1}([a-Z0-9_])*"
             if line[0] == "I HAS A":
+
+                # check if the <var Ident> follows the right format
+                if not checkVar(line[1]):
+                    print("SYNTAX ERROR: line #idk variable identifier invalid syntax")
+                    exit()
+
                 new_variable = [None,None,None,None]
                 new_variable[0] = line[1]
 
+                # if I HAS A <var Ident> ITZ <expression>
+                # group the <expression> first to reduce length of line to 4 with the last element as the value
                 if len(line) > 4:
                     if line[3] in arithmetic_keywords:
                         Arithmetic(line)
-                        #print(line)
-                        #print("nasa arithmetic")
-                        #dito ilalagay
+                        
                     elif line[3] in comparison_keywords:
                         Comparison(line)
-                        #print(line)
-                        #print("nasa comparison")
 
                     elif line[3] in boolean_keywords or line[3] in unary_keywords:
-                        #print(line)
-                        #print("NASA BOOLEAN!!!")
                         Boolean(line)
 
+                # if I HAS A <var Ident>
+                # initialize the variable type into NOOB
                 if len(line) == 2:
                     new_variable[1] = "NOOB"
 
+                # if I HAS A <var Ident> ITZ <value>
                 if len(line) == 4:
-                    #print(line)
-                    #print("NASA 4 AKO")
+                    #
                     new_variable[2] = line[3]
-                    #print(new_variable[2])
+                    
                     if isinstance(new_variable[2], list):
                         if new_variable[2][0] in arithmetic_keywords:
                             floatflag = 0
                             for items in temp:
                                 if checkFloat(items):
-                                    #print("ETO PO YUNG FLOAT")
-                                    #print(items)
-                                    # may float
                                     floatflag = 1
                                     break
                             if floatflag == 1:
@@ -127,8 +109,6 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                             break
 
                 legit_symbol_table.append(new_variable)
-                #print(legit_symbol_table)
-                # print(line)
 
             #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w assignment statements
@@ -136,8 +116,6 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 #print("pumasok dito")
                 #print(line)
                 if line[1] == "R":
-
-
                     for idx in range(len(legit_symbol_table)):
                         if legit_symbol_table[idx][0] == line[0]:
                             tableindex = idx
@@ -154,6 +132,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
                     if len(line) == 3:
                         legit_symbol_table[tableindex][2] = line[2]
+                        print(line[2])
                         if isinstance(legit_symbol_table[tableindex][2], list):
                             if line[2][0] in arithmetic_keywords:
                                 floatflag = 0
@@ -168,7 +147,19 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
                             elif line[2][0] in comparison_keywords or line[2][0] in boolean_keywords or line[2][0] in unary_keywords:
                                 legit_symbol_table[tableindex][1] = "TROOF"
-
+                        elif line[0] == "IT":
+                            for elem in legit_symbol_table:
+                                if elem[0] == "IT":
+                                    elem[2] = line[2]
+                                    if checkInt(elem[2]):
+                                        elem[1] = "NUMBR"
+                                    elif checkFloat(elem[2]):
+                                        elem[1] = "NUMBAR"
+                                    elif checkBoolean(elem[2]):
+                                        elem[1] = "TROOF"
+                                    else:
+                                        elem[1] = "YARN"
+                                    print(elem)
 
                         for element in lexemes_table:
                             if element.lexeme == legit_symbol_table[tableindex][2]:
@@ -176,9 +167,6 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                                 store_list = element.type.split()
                                 #get only YARN
                                 legit_symbol_table[tableindex][1] = store_list[0]
-
-
-
 
 
             #deals w if-else
@@ -296,47 +284,48 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
         elif element.lexeme in infinite_keywords:
             element.type = "Infinite Arity Keywords"
 
-    #check the lexeme table (tokens table talaga sya)
+    
+    #UNCOMMENT TO CHECK THE FINAL lexemes_table AND THE symbol_table (code per line)
     '''for i in range(len(lexemes_table)):
-      print([lexemes_table[i].lexeme, lexemes_table[i].type])'''
+      print([lexemes_table[i].lexeme, lexemes_table[i].type])
 
-    #print()
-    #print(symbol_table)
+    print()
 
-    #print()
     for elem in symbol_table:
         print(elem)
+        
+    print()
 
-    # print(checkVar("var1"))
+    for item in legit_symbol_table:
+        print(item)
+    '''
 
     return symbol_table, lexemes_table, legit_symbol_table,line_table_without_groupings
 
 def checkInt(string):
     if re.match(r"^-{0,1}[0-9]{1,}$", string):
         return True
-    else:
-        return False
+    return False
     
 def checkFloat(string):
     if re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", string):
         return True
-    else:
-        return False
+    return False
 
 
 def checkVar(string):
     if re.match(r"[a-zA-Z]{1}[a-zA-Z0-9_]*", string):
         return True
-    else:
-        return False
+    return False
 
 def checkBoolean(string):
     if string == "WIN" or string == "FAIL":
         return True
-    else:
-        return False
+    return False
 
 # credits to https://stackoverflow.com/a/40775654
+
+# ERROR PAG MAY NESTED NA OTHER TYPE OF EXPRESSIONS NA DI ARITHMETIC
 def evaluate(nested_list):
     if isinstance(nested_list, str):
         #dito ichecheck kung valid ba yung format ng operands
@@ -353,6 +342,7 @@ def evaluate(nested_list):
         "BIGGR OF":max,
         "SMALLR OF":min
     }
+
     return ops[op](evaluate(operand1), evaluate(operand2))
 
 def Arithmetic(line):
@@ -556,7 +546,7 @@ def Boolean(line):
                         line.pop(j-1)
                         break
         
-
+            
     # print(line)
 
 code7 = '''
@@ -675,7 +665,7 @@ HAI
     BIGGR OF PRODUKT OF 11 AN 2 AN QUOSHUNT OF SUM OF 3 AN 5 AN 2
     VISIBLE IT
     BTW arithmetic with variables
-    I HAS A var1 ITZ 5
+    I HAS A 0ar1 ITZ 5
     I HAS A var2 ITZ 3
     DIFF OF var2 AN var1
     VISIBLE IT
@@ -820,7 +810,7 @@ HAI
 KTHXBYE
 '''
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code3)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code)
 
 SyntaxAnalyzer(symbol_table, lexemes_table)
 

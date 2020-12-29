@@ -8,6 +8,7 @@ infinite_keywords = ["ALL OF", "ANY OF"]
 io_keywords = ["VISIBLE", "GIMMEH"]
 
 ######## PUTANGINA DAPAT MAPAGANA NATIN YUNG COMPARISON TAPOS BIGLANG MAY ARITHMETIC PUTANGINA!!!!
+######## OKAY NA SER WAG NA GALET
 
 
 def evaluate(nested_list,legit_symbol_table):
@@ -750,7 +751,7 @@ KTHXBYE
 '''
 
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code3)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code2)
 
 symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
 

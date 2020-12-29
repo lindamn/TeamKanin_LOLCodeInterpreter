@@ -4,9 +4,6 @@ class SymbolTableElement():
   def __init__(self, lexeme):
     self.lexeme = lexeme
     self.type = None
-  #   self.typeOfValue = None
-   # self.value = None
-   # self.refEnvironment = None
 
 def LexicalAnalyzer(code):
 
@@ -17,7 +14,6 @@ def LexicalAnalyzer(code):
     lines = code.split("\n")
 
     symbol_table = []
-
 
     # splits the lines by spaces
     for i in range(0, len(lines)):
@@ -159,14 +155,13 @@ def LexicalAnalyzer(code):
                             symbol_table[i].pop(j+1)
                             etc_flag -= 1
                             break                            
-    
-    # print(symbol_table)
 
-    #try naten tanggalin comments sa symbol_table
+    #replaces the BTW single line comments with [] in the symbol_table (list of lines)
     for line in symbol_table:
       if line != [] and line[0] == 'BTW':
-        symbol_table.pop(symbol_table.index(line))
+        symbol_table[symbol_table.index(line)] = []
 
+      #for the BTW comments in the same line with other valid lines
       btwIndex = False
       for i in range(len(line)):
         if line[i] == 'BTW':
@@ -183,18 +178,24 @@ def LexicalAnalyzer(code):
       if line == ['OBTW']:
         index = symbol_table.index(line)
         symbol_table.pop(index)
+        counter = 2
         while symbol_table[index] != ['TLDR']:
           symbol_table.pop(index)
+          counter += 1
         symbol_table.pop(index)
-        
+        while counter > 0:
+          symbol_table.insert(index, [])
+          counter -= 1
+      if line == ['KTHXBYE']:
+        symbol_table.pop(symbol_table.index(line)+1)
 
     for line in range(len(symbol_table)):
       for i in range(len(symbol_table[line])):
         lexemes_table.append(SymbolTableElement(symbol_table[line][i]))
 
-    #adds the type of lexemes (for tokens)
+    #adds the type of lexemes (for tokens) part 1 (operator types in part2 in syntax analyzer)
     for element in lexemes_table:
-      if re.match(r"^\".*\"$", element.lexeme):#element.lexeme[0] == "\"" and element.lexeme[len(element.lexeme)-1] == "\"":
+      if re.match(r"^\".*\"$", element.lexeme):
         element.type = "YARN Literal"
       elif re.match(r"^-?[0-9]*$",element.lexeme):
         element.type = "NUMBR Literal"
@@ -217,13 +218,13 @@ def LexicalAnalyzer(code):
       elif element.lexeme == "R":
         element.type = "Assignment Operator"
       elif element.lexeme == "O RLY?":
-        element.type = "If-Else Block Delimiter"    #di ko knows tamang name nito
+        element.type = "If-Else Block Delimiter"    
       elif element.lexeme == "YA RLY":
         element.type = "If-Clause Keyword"
       elif element.lexeme == "NO WAI":
         element.type = "Else-Clause Keyword"
       elif element.lexeme == "WTF?":
-        element.type = "Switch-Case Block Delimiter"    #eto ren anu ba name nila dapat?
+        element.type = "Switch-Case Block Delimiter"   
       elif element.lexeme == "OMG":
         element.type = "Case Keyword"
       elif element.lexeme == "OMGWTF":
@@ -235,34 +236,110 @@ def LexicalAnalyzer(code):
       elif re.match(r"^[A-z]{1}([A-z0-9_])*", element.lexeme) :
         element.type = "Variable Identifier"
 
+    #UNCOMMENT TO CHECK THE FINAL lexemes_table AND THE symbol_table (code per line)
     '''for i in range(len(lexemes_table)):
       print([lexemes_table[i].lexeme, lexemes_table[i].type])
 
     print()
-    print(symbol_table)'''
+
+    for line in symbol_table:
+      print(line)'''
+
     return symbol_table, lexemes_table
 
-code5 = '''
-BTW for USER INPUT/OUTPUT
+code7 = '''
+BTW for switch
 HAI
-  BTW printing of literals
-  VISIBLE "henlo"
-  VISIBLE 17
-  VISIBLE 1.7
-  VISIBLE WIN
-  BTW infinite arity printing (concat)
-  VISIBLE "hi, I'm pi. My value is " 3.14
-  VISIBLE "brrr " "baaa " "fa la la," " la la"
-  BTW printing of expressions
-  VISIBLE SUM OF 2 AN PRODUKT OF 3 AN 5
-  VISIBLE BOTH SAEM 2 AN 3
-  VISIBLE EITHER OF WIN AN FAIL
-  BTW printing of variables and use of GIMMEH
-  I HAS A input 
-  VISIBLE "gif imput "
-  GIMMEH input
-  VISIBLE input
-  VISIBLE "u gif meh " input "!"
+  IT R 18
+  WTF?
+    OMG 1
+      VISIBLE "I'm the only oneeeee"
+      GTFO
+    OMG 3
+      VISIBLE "third time's a charm"
+    OMG 5
+      VISIBLE "no one wants a five"
+      GTFO
+    OMG 7
+      VISIBLE "why is six afraid of seven?"
+      VISIBLE "7 8 " SUM OF IT AN 2
+      GTFO
+    OMG 11
+      VISIBLE "Friends don't lie. -Eleven"
+      GTFO
+    OMG 13
+      VISIBLE "birthday ni taylor swift, dec 13"
+    OMG 17
+      VISIBLE "seventeen right here"
+    OMGWTF
+      VISIBLE "ano na"
+      VISIBLE IT
+    OIC
+KTHXBYE
+'''
+
+code6 = '''
+BTW for if-else statements
+HAI
+  I HAS A a ITZ 12
+  I HAS A b ITZ 5
+
+  BOTH SAEM 18 AN "b"
+  O RLY?
+    YA RLY
+      VISIBLE IT
+      VISIBLE "it is the same"
+      b R 17
+      SUM OF b AN 5
+      VISIBLE IT
+    NO WAI
+      VISIBLE IT
+      VISIBLE "it is not!"
+      b R 18
+      DIFFRINT 18 AN "HELLO"
+      VISIBLE IT
+  OIC
+
+KTHXBYE
+'''
+
+code5 = '''
+BTW test case for variables
+HAI
+  BTW variable declarations
+  BTW initialization of literal values
+  I HAS A var1
+  I HAS A var2 ITZ 17
+  I HAS A var3 ITZ "seventeen"
+  I HAS A var4 ITZ 5.26
+  I HAS A var5 ITZ WIN
+
+  BTW initialization of variable using variable
+  I HAS A var6 ITZ var2
+  BTW initialization of variable using expressions
+  I HAS A var7 ITZ DIFF OF 1 AN 2
+  I HAS A var8 ITZ QUOSHUNT OF 14 AN SUM OF 3 AN 9
+  I HAS A var9 ITZ DIFFRINT 1 AN 1
+  I HAS A var10 ITZ DIFFRINT 2 AN 1
+  I HAS A var11 ITZ NOT WIN
+
+  BTW printing for validation
+  OBTW
+    if your interpreter cannot print variables
+    but can support variables,
+    make sure that the values are updated in the symbol table
+  TLDR
+  BTW VISIBLE var1  // cannot be printed coz NOOB
+  VISIBLE var2
+  VISIBLE var3
+  VISIBLE var4
+  VISIBLE var5
+  VISIBLE var6
+  VISIBLE var7
+  VISIBLE var8
+  VISIBLE var9
+  VISIBLE var10
+  VISIBLE var11
 KTHXBYE
 '''
 
@@ -278,7 +355,7 @@ HAI
     VISIBLE IT
     MOD OF 1 AN 2
     VISIBLE IT
-    BIGGR OF 1 AN 2   BTW this is a comment
+    BIGGR OF 1 AN 2
     VISIBLE IT
     SMALLR OF 1 AN 2
     VISIBLE IT
@@ -312,7 +389,7 @@ HAI
   I HAS A var6
   I HAS A var7
   I HAS A var8
-  
+
   BTW assignment of literals
   var1 R 17
   var2 R "seventeen"
@@ -331,7 +408,7 @@ HAI
   BTW IT!!!!
   IT R "am IT"
   BTW printing...
-  VISIBLE "var5"
+  VISIBLE "var5 HELLO"
   VISIBLE var6
   VISIBLE var7
   VISIBLE var8
@@ -369,7 +446,7 @@ HAI
   BTW with variables
   I HAS A var1 ITZ WIN
   I HAS A var2 ITZ FAIL
-  
+
   NOT var1
   VISIBLE IT
   ALL OF var1 AN WIN AN WIN AN var2 AN WIN
@@ -396,7 +473,7 @@ HAI
   VISIBLE IT
   DIFFRINT BIGGR OF 1 AN 2 AN SMALLR OF 3 AN 2
   VISIBLE IT
-  DIFFRINT BOTH SAEM 1 AN 2 AN DIFFRINT 1 AN 2
+  DIFFRINT SUM OF 1 AN 2 AN DIFF OF 1 AN 2
   VISIBLE IT
   BTW with variables
   I HAS A var1 ITZ WIN
@@ -405,8 +482,33 @@ HAI
   VISIBLE IT
   BOTH SAEM var1 AN var2
   VISIBLE IT
+  NOT FAIL
   DIFFRINT BOTH SAEM var1 AN var2 AN DIFFRINT var1 AN var1
   VISIBLE IT
+KTHXBYE
+'''
+
+code8 = '''
+BTW for USER INPUT/OUTPUT
+HAI
+  BTW printing of literals
+  VISIBLE "henlo"
+  VISIBLE 17
+  VISIBLE 1.7
+  VISIBLE WIN
+  BTW infinite arity printing (concat)
+  VISIBLE "hi, I'm pi. My value is " 3.14
+  VISIBLE "brrr " "baaa " "fa la la," " la la"
+  BTW printing of expressions
+  VISIBLE SUM OF 2 AN PRODUKT OF 3 AN 5
+  VISIBLE BOTH SAEM 2 AN 3
+  VISIBLE EITHER OF WIN AN FAIL
+  BTW printing of variables and use of GIMMEH
+  I HAS A input 
+  VISIBLE "gif imput "
+  GIMMEH input
+  VISIBLE input
+  VISIBLE "u gif meh " input "!"
 KTHXBYE
 '''
 LexicalAnalyzer(code)
