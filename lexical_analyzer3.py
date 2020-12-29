@@ -61,11 +61,6 @@ def LexicalAnalyzer(code):
         # for other cases aside VISIBLE
         split_list = lines[i].split(" ")
 
-        # for words in split_list:
-        #     for valid_words in keywords:
-        #         if valid_words == words:
-        #             continue
-
         new_split_list = []
         for j in range(0, len(split_list)):
             if split_list[j] != "":
@@ -171,9 +166,7 @@ def LexicalAnalyzer(code):
         while len(line) != btwIndex:
           line.pop(-1)
 
-    #adds all lexemes in the symbol table
-    lexemes_table = []
-
+    #removes the OBTW and BTW and replaces it with empty lists
     for line in symbol_table:
       if line == ['OBTW']:
         index = symbol_table.index(line)
@@ -186,8 +179,30 @@ def LexicalAnalyzer(code):
         while counter > 0:
           symbol_table.insert(index, [])
           counter -= 1
-      if line == ['KTHXBYE']:
-        symbol_table.pop(symbol_table.index(line)+1)
+      if len(line) != 0:
+        if line[0] == "BTW":
+          line = []
+      # if line == ['KTHXBYE']:
+      #   symbol_table.pop(symbol_table.index(line)+1)
+
+    all_keywords = ["HAI", "KTHXBYE", "I HAS A", "ITZ", "VISIBLE", "GIMMEH", "IT", "SMOOSH", "ALL OF", "ANY OF", "NOT", "AN", "SUM OF", "DIFF OF", "PRODUKT OF",
+    "QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF", "BOTH OF", "EITHER OF", "WON OF", "BOTH SAEM", "DIFFRINT", "FAIL", "WIN", "R", "O RLY?", "YA RLY", "NO WAI",
+    "OIC", "MEBBE", "WTF?", "OMG", "OMGWTF"]
+
+    # checks if all lexemes are valid
+    for i in range(len(symbol_table)):
+      #checks if current line is not empty
+      if symbol_table[i] != []:
+        for j in range(len(symbol_table[i])):
+          #checks if token is keyword, or string, or int, or float, or var
+          if not (symbol_table[i][j] in all_keywords or re.match(r"[\"]([^\"]*?)[\"]$",symbol_table[i][j]) or re.match(r"-{0,1}[0-9]{1,}$",symbol_table[i][j]) or re.match(r"-{0,1}[0-9]{1,}\.[0-9]{1,}$", symbol_table[i][j]) or re.match(r"[a-zA-Z]{1}([a-zA-Z0-9_])*$", symbol_table[i][j])):
+            print("INVALID TOKEN")
+            return i
+            # print(symbol_table[i][j])
+    # print(symbol_table)
+
+    #adds all lexemes in the symbol table
+    lexemes_table = []
 
     for line in range(len(symbol_table)):
       for i in range(len(symbol_table[line])):
@@ -375,6 +390,7 @@ HAI
     VISIBLE IT
     SUM OF var1 AN 12.0
     VISIBLE IT
+    2aaaa
 KTHXBYE
 '''
 
@@ -511,4 +527,4 @@ HAI
   VISIBLE "u gif meh " input "!"
 KTHXBYE
 '''
-LexicalAnalyzer(code)
+# LexicalAnalyzer(code)

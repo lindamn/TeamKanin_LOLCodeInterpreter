@@ -163,73 +163,81 @@ class Ui_MainWindow(object):
             # code para sa lexical analyzer
             lexemes = la.LexicalAnalyzer(code)
 
-            for i in range(0, len(lexemes[1])):
-                self.lexemes_list.insertRow(i)
-                self.lexemes_list.setItem(i,0,QtWidgets.QTableWidgetItem(lexemes[1][i].lexeme))
-                self.lexemes_list.setItem(i,1,QtWidgets.QTableWidgetItem(lexemes[1][i].type))
-            
-            #code para sa syntax analyzer
-            symbol_table = sya.SyntaxAnalyzer(lexemes[0],lexemes[1])
+            if not isinstance(lexemes, int):
+                for i in range(0, len(lexemes[1])):
+                    self.lexemes_list.insertRow(i)
+                    self.lexemes_list.setItem(i,0,QtWidgets.QTableWidgetItem(lexemes[1][i].lexeme))
+                    self.lexemes_list.setItem(i,1,QtWidgets.QTableWidgetItem(lexemes[1][i].type))
 
-            # ineedit lang yung symbol table
-            for i in range(0, len(symbol_table[2])):
-                self.symboltable_list.insertRow(i)
-                self.symboltable_list.setItem(i,0,QtWidgets.QTableWidgetItem(symbol_table[2][i][0]))
-                if isinstance(symbol_table[2][i][2], str):
-                    self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem(symbol_table[2][i][2]))
-                else:
-                    self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem("to be evaluated"))
-            initialized_flag = True
-            finished_flag = False
-        
-        if running and current_line != len(lexemes[0]):
-            # dito yung code para sa VISIBLE/GIMMEH
-            while len(lexemes[0]) - current_line != 0:
-                i = current_line
-                # checks if empty yung text box ehe
-                if len(lexemes[0][i]) != 0:
-                    # checks if may naencounter na VISIBLE, and ipprint yung laman nya
-                    if lexemes[0][i][0] == "VISIBLE":
-                        line_to_be_printed = ""
-                        for j in range(1, len(lexemes[0][i])):
-                            if isinstance(lexemes[0][i][1], str):
-                                # if string
-                                if re.match(r"[\"]([^\"]*?)[\"]", lexemes[0][i][j]):
-                                    line_to_be_printed = line_to_be_printed + lexemes[0][i][j][1:-1]
-                                # if integer/float/boolean
-                                elif re.match(r"^-{0,1}[0-9]{1,}$", lexemes[0][i][j]) or re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", lexemes[0][i][j]) or lexemes[0][i][j] == "WIN" or lexemes[0][i][j] == "FAIL":
-                                    line_to_be_printed = line_to_be_printed + lexemes[0][i][j]
-                                # if variable
-                                else:
-                                    for k in range(0, len(symbol_table[2])):
-                                        if lexemes[0][i][j] == symbol_table[2][k][0]:
-                                            # if literal na yung laman sa symbol table
-                                            if isinstance(symbol_table[2][k][2], str):
-                                                #if string yung ipprint
-                                                if re.match(r"[\"]([^\"]*?)[\"]", symbol_table[2][k][2]):
-                                                    line_to_be_printed = line_to_be_printed + symbol_table[2][k][2][1:-1]
-                                                #if integer/float/troof
-                                                elif re.match(r"^-{0,1}[0-9]{1,}$", symbol_table[2][k][2]) or re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", symbol_table[2][k][2]) or symbol_table[2][k][2] == "WIN" or symbol_table[2][k][2] == "FAIL":
-                                                    line_to_be_printed = line_to_be_printed + symbol_table[2][k][2]
-                                            # if list/expression pa
+                    #code para sa syntax analyzer
+                    symbol_table = sya.SyntaxAnalyzer(lexemes[0],lexemes[1])
+
+                    # ineedit lang yung symbol table
+                    for i in range(0, len(symbol_table[2])):
+                        self.symboltable_list.insertRow(i)
+                        self.symboltable_list.setItem(i,0,QtWidgets.QTableWidgetItem(symbol_table[2][i][0]))
+                        if isinstance(symbol_table[2][i][2], str):
+                            self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem(symbol_table[2][i][2]))
+                        else:
+                            self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem("to be evaluated"))
+                    initialized_flag = True
+                    finished_flag = False
+
+                    if running and current_line != len(lexemes[0]):
+                        # dito yung code para sa VISIBLE/GIMMEH
+                        while len(lexemes[0]) - current_line != 0:
+                            i = current_line
+                            # checks if empty yung text box ehe
+                            if len(lexemes[0][i]) != 0:
+                                # checks if may naencounter na VISIBLE, and ipprint yung laman nya
+                                if lexemes[0][i][0] == "VISIBLE":
+                                    line_to_be_printed = ""
+                                    for j in range(1, len(lexemes[0][i])):
+                                        if isinstance(lexemes[0][i][1], str):
+                                            # if string
+                                            if re.match(r"[\"]([^\"]*?)[\"]", lexemes[0][i][j]):
+                                                line_to_be_printed = line_to_be_printed + lexemes[0][i][j][1:-1]
+                                            # if integer/float/boolean
+                                            elif re.match(r"^-{0,1}[0-9]{1,}$", lexemes[0][i][j]) or re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", lexemes[0][i][j]) or lexemes[0][i][j] == "WIN" or lexemes[0][i][j] == "FAIL":
+                                                line_to_be_printed = line_to_be_printed + lexemes[0][i][j]
+                                            # if variable
                                             else:
-                                                line_to_be_printed = line_to_be_printed + "wala pa (ieevaluate pa lang yung sa symbol table)"
-                                            break
-                            else:
-                                line_to_be_printed = line_to_be_printed + "wala pa (ieevaluate pa lang yung expression)"
-                        self.code_output.append(line_to_be_printed)
+                                                for k in range(0, len(symbol_table[2])):
+                                                    if lexemes[0][i][j] == symbol_table[2][k][0]:
+                                                        # if literal na yung laman sa symbol table
+                                                        if isinstance(symbol_table[2][k][2], str):
+                                                            #if string yung ipprint
+                                                            if re.match(r"[\"]([^\"]*?)[\"]", symbol_table[2][k][2]):
+                                                                line_to_be_printed = line_to_be_printed + symbol_table[2][k][2][1:-1]
+                                                            #if integer/float/troof
+                                                            elif re.match(r"^-{0,1}[0-9]{1,}$", symbol_table[2][k][2]) or re.match(r"^-{0,1}[0-9]{1,}\.{1}[0-9]{1,}$", symbol_table[2][k][2]) or symbol_table[2][k][2] == "WIN" or symbol_table[2][k][2] == "FAIL":
+                                                                line_to_be_printed = line_to_be_printed + symbol_table[2][k][2]
+                                                        # if list/expression pa
+                                                        else:
+                                                            line_to_be_printed = line_to_be_printed + "wala pa (ieevaluate pa lang yung sa symbol table)"
+                                                        break
+                                        else:
+                                            line_to_be_printed = line_to_be_printed + "wala pa (ieevaluate pa lang yung expression)"
+                                    self.code_output.append(line_to_be_printed)
 
-                    # checks if may naencounter na GIMMEH, and magaantay ng input sa user bago tumuloy
-                    if lexemes[0][i][0] == "GIMMEH":
-                        running = False
-                        break
-                current_line += 1
-                    
-        # if tapos na basahin ng program yung lexemes
-        if current_line == len(lexemes[0]):
-            finished_flag = True
-            current_line = 0
-            initialized_flag = False
+                                # checks if may naencounter na GIMMEH, and magaantay ng input sa user bago tumuloy
+                                if lexemes[0][i][0] == "GIMMEH":
+                                    running = False
+                                    break
+                            current_line += 1
+                                
+                    # if tapos na basahin ng program yung lexemes
+                    if current_line == len(lexemes[0]):
+                        finished_flag = True
+                        current_line = 0
+                        initialized_flag = False
+            else:
+                finished_flag = True
+                current_line = 0
+                initialized_flag = False
+                error_message = "LEXICAL ERROR AT LINE " + str(lexemes+1)
+                self.code_output.append(error_message)
+            
 
     def file_dialog_open(self, MainWindow):
         home_dir = str(os.path.dirname(os.path.abspath(__file__)))
