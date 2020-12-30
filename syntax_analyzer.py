@@ -47,6 +47,15 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
             if line[0] == "VISIBLE":
                 while True:
                     if line[idx] in arithmetic_keywords:
+                        for i in range(idx+1, len(line_table_without_groupings[current_line_no])):
+                            current_keyword = line_table_without_groupings[current_line_no][i]
+                            # checks if only arithmetic expressions/ints/floats follow
+                            if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
+                                continue
+                            else:
+                                #checks if is is a variable name or if it is a reserved keyword
+                                if current_keyword in all_keywords and current_keyword != "AN":
+                                    return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                     elif line[idx] in comparison_keywords:
                         Comparison(line)
@@ -57,6 +66,15 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                         break 
                 
                 if line[1] in arithmetic_keywords:
+                    for i in range(2, len(line_table_without_groupings[current_line_no])):
+                        current_keyword = line_table_without_groupings[current_line_no][i]
+                        # checks if only arithmetic expressions/ints/floats follow
+                        if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
+                            continue
+                        else:
+                            #checks if is is a variable name or if it is a reserved keyword
+                            if current_keyword in all_keywords and current_keyword != "AN":
+                                return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                     Arithmetic(line)
                 elif line[1] in comparison_keywords:
                     Comparison(line)
@@ -153,6 +171,15 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
                     if len(line) > 3:
                         if line[2] in arithmetic_keywords:
+                            for i in range(3, len(line_table_without_groupings[current_line_no])):
+                                current_keyword = line_table_without_groupings[current_line_no][i]
+                                # checks if only arithmetic expressions/ints/floats follow
+                                if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
+                                    continue
+                                else:
+                                    #checks if is is a variable name or if it is a reserved keyword
+                                    if current_keyword in all_keywords and current_keyword != "AN":
+                                        return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                             Arithmetic(line)
                         elif line[2] in comparison_keywords:
                             Comparison(line)
@@ -216,6 +243,15 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 if yarly_flag == True:
                     #continue hanggang sa makakita ng no wai
                     if line[0] in arithmetic_keywords:
+                        for i in range(1, len(line_table_without_groupings[current_line_no])):
+                            current_keyword = line_table_without_groupings[current_line_no][i]
+                            # checks if only arithmetic expressions/ints/floats follow
+                            if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
+                                continue
+                            else:
+                                #checks if is is a variable name or if it is a reserved keyword
+                                if current_keyword in all_keywords and current_keyword != "AN":
+                                    return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                         #print(line)
                     if line[0] in comparison_keywords:
@@ -226,6 +262,15 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                         #print(line)
                 if nowai_flag == True:
                     if line[0] in arithmetic_keywords:
+                        for i in range(1, len(line_table_without_groupings[current_line_no])):
+                            current_keyword = line_table_without_groupings[current_line_no][i]
+                            # checks if only arithmetic expressions/ints/floats follow
+                            if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
+                                continue
+                            else:
+                                #checks if is is a variable name or if it is a reserved keyword
+                                if current_keyword in all_keywords and current_keyword != "AN":
+                                    return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                         #print(line)
                     if line[0] in comparison_keywords:
@@ -257,6 +302,15 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                     omg_flag = True
                 if omg_flag == True:
                     if line[0] in arithmetic_keywords:
+                        for i in range(1, len(line_table_without_groupings[current_line_no])):
+                            current_keyword = line_table_without_groupings[current_line_no][i]
+                            # checks if only arithmetic expressions/ints/floats follow
+                            if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
+                                continue
+                            else:
+                                #checks if is is a variable name or if it is a reserved keyword
+                                if current_keyword in all_keywords and current_keyword != "AN":
+                                    return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                         #print(line)
                     if line[0] in comparison_keywords:
@@ -273,6 +327,15 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 if line[0] == "OMGWTF":
                     # print("default case")
                     if line[0] in arithmetic_keywords:
+                        for i in range(1, len(line_table_without_groupings[current_line_no])):
+                            current_keyword = line_table_without_groupings[current_line_no][i]
+                            # checks if only arithmetic expressions/ints/floats follow
+                            if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
+                                continue
+                            else:
+                                #checks if is is a variable name or if it is a reserved keyword
+                                if current_keyword in all_keywords and current_keyword != "AN":
+                                    return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                         #print(line)
                     if line[0] in comparison_keywords:

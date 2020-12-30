@@ -16,7 +16,6 @@ visible_list = []
 
 def evaluate(nested_list,legit_symbol_table):
 
-
     if isinstance(nested_list, str):
 
         #dito ichecheck kung valid ba yung format ng operands
@@ -27,25 +26,54 @@ def evaluate(nested_list,legit_symbol_table):
                     if nested_list == elements[0]:
                         if sa.checkInt(elements[2]):
                             return int(elements[2])
-                        else:
+                        elif sa.checkFloat(nested_list):
                             return float(elements[2])
+                        else:
+                            return None
 
             if sa.checkInt(nested_list):
                 return int(nested_list)
-            else:
+            elif sa.checkFloat(nested_list):
                 return float(nested_list)
+            else:
+                return None
 
     op, operand1, an, operand2 = nested_list
     ops = {
-        "SUM OF":operator.add,
-        "PRODUKT OF":operator.mul,
-        "DIFF OF":operator.sub,
-        "QUOSHUNT OF":operator.truediv,
-        "MOD OF":operator.mod,
+        "SUM OF":ADDoperator,
+        "PRODUKT OF":MULTIPLYoperator,
+        "DIFF OF":SUBTRACToperator,
+        "QUOSHUNT OF":DIVIDEoperator,
+        "MOD OF":MODULOoperator,
         "BIGGR OF":max,
         "SMALLR OF":min
     }
     return ops[op](evaluate(operand1,legit_symbol_table), evaluate(operand2,legit_symbol_table))
+
+def ADDoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 + op2
+
+def MULTIPLYoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 * op2
+
+def SUBTRACToperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 - op2
+
+def DIVIDEoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 / op2
+
+def MODULOoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 % op2
 
 def ANDoperator(op1,op2):
     return op1 and op2
