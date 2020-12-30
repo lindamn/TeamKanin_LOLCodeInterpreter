@@ -185,6 +185,7 @@ class Ui_MainWindow(object):
                 #execute na yung syntax analyzer
                 if syntactically_correct_flag == False:
                     symbol_table = sya.SyntaxAnalyzer(lexemes[0],lexemes[1])
+                    #magpprint kapag error message lang nireturn ni syntax analyzer
                     if isinstance(symbol_table, str):
                         self.code_output.append(symbol_table)
                         return
@@ -199,8 +200,10 @@ class Ui_MainWindow(object):
                         self.symboltable_list.setItem(i,0,QtWidgets.QTableWidgetItem(symbol_table[2][i][0]))
                         if isinstance(symbol_table[2][i][2], str):
                             self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem(symbol_table[2][i][2]))
+                        elif symbol_table[2][i][2] == None:
+                            self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem("NOOB"))
                         else:
-                            self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem("to be evaluated"))
+                            self.symboltable_list.setItem(i,1,QtWidgets.QTableWidgetItem(str(symbol_table[2][i][2])))
                     initialized_flag = True
                     finished_flag = False
 
@@ -216,6 +219,16 @@ class Ui_MainWindow(object):
             #idadaan na sa semantics analyzer and ieexecute :>
             final = sea.SemanticsAnalyzer(current_line,symbol_table[0],symbol_table[1],symbol_table[2],symbol_table[3])
 
+            if isinstance(final, list):
+                for j in range(0, len(final)):
+                    self.code_output.append(str(final[j]))
+                finished_flag = True
+                current_line = 0
+                initialized_flag = False
+                tokenized_flag = False
+                syntactically_correct_flag = False
+                return
+
             current_line = final[1]
             if running and current_line <= len(lexemes[0]):
                 print(final[0])
@@ -224,7 +237,12 @@ class Ui_MainWindow(object):
                     self.code_output.append(str(final[0][j]))
                 #pag-ayos ng symbol table
                 for j in range(0, len(final[3])):
-                    self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(str(final[3][j][2])))
+                    if isinstance(final[3][j][2], str):
+                        self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(final[3][j][2]))
+                    elif final[3][j][2] == None:
+                        self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem("NOOB"))
+                    else:
+                        self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(str(final[3][j][2])))
                         
             # if tapos na basahin ng program yung lexemes
             if current_line == len(lexemes[0]):

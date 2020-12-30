@@ -54,7 +54,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                                 continue
                             else:
                                 #checks if is is a variable name or if it is a reserved keyword
-                                if current_keyword in all_keywords and current_keyword != "AN":
+                                if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
                                     return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                     elif line[idx] in comparison_keywords:
@@ -73,7 +73,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                             continue
                         else:
                             #checks if is is a variable name or if it is a reserved keyword
-                            if current_keyword in all_keywords and current_keyword != "AN":
+                            if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
                                 return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                     Arithmetic(line)
                 elif line[1] in comparison_keywords:
@@ -100,7 +100,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 symbol_table[lineIndex] = [symbol_table[lineIndex]]
             elif (line[0] == "ALL OF" or line[0] == "ANY OF") and line[len(line)-1] != "MKAY":
                 #ERROR: There should be an MKAY at the end of the line
-                print("ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line)))
+                # print("ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line)))
                 return "ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line)+1)
 
             #deals w variable initialization
@@ -178,7 +178,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                                     continue
                                 else:
                                     #checks if is is a variable name or if it is a reserved keyword
-                                    if current_keyword in all_keywords and current_keyword != "AN":
+                                    if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
                                         return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                             Arithmetic(line)
                         elif line[2] in comparison_keywords:
@@ -250,7 +250,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                                 continue
                             else:
                                 #checks if is is a variable name or if it is a reserved keyword
-                                if current_keyword in all_keywords and current_keyword != "AN":
+                                if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
                                     return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                         #print(line)
@@ -269,7 +269,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                                 continue
                             else:
                                 #checks if is is a variable name or if it is a reserved keyword
-                                if current_keyword in all_keywords and current_keyword != "AN":
+                                if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
                                     return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                         #print(line)
@@ -309,7 +309,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                                 continue
                             else:
                                 #checks if is is a variable name or if it is a reserved keyword
-                                if current_keyword in all_keywords and current_keyword != "AN":
+                                if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
                                     return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                         #print(line)
@@ -334,7 +334,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                                 continue
                             else:
                                 #checks if is is a variable name or if it is a reserved keyword
-                                if current_keyword in all_keywords and current_keyword != "AN":
+                                if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
                                     return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                         Arithmetic(line)
                         #print(line)
@@ -354,7 +354,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                         continue
                     else:
                         #checks if is is a variable name or if it is a reserved keyword
-                        if current_keyword in all_keywords and current_keyword != "AN":
+                        if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
                             return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                 Arithmetic(line)
 

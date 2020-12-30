@@ -249,6 +249,18 @@ def LexicalAnalyzer(code):
         element.type = "Break Keyword"
       elif element.lexeme == "OIC":
         element.type = "Conditional Block Delimiter"
+      elif element.lexeme == "EITHER OF":
+        element.type = "OR Operator"
+      elif element.lexeme == "BOTH OF":
+        element.type = "AND Operator"
+      elif element.lexeme == "WON OF":
+        element.type = "XOR Operator"
+      elif element.lexeme == "ALL OF":
+        element.type = "Infinite Arity Boolean Operation Delimiter"
+      elif element.lexeme == "ANY OF":
+        element.type = "Infinite Arity Boolean Operation Delimiter"
+      elif element.lexeme == "MKAY":
+        element.type = "Infinite Arity Boolean Operation Delimiter"
       elif re.match(r"^[A-z]{1}([A-z0-9_])*", element.lexeme) :
         element.type = "Variable Identifier"
 
