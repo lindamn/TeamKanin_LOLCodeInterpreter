@@ -7,10 +7,7 @@ unary_keywords = ["NOT"]
 infinite_keywords = ["ALL OF", "ANY OF"]
 io_keywords = ["VISIBLE", "GIMMEH"]
 
-<<<<<<< HEAD
-=======
 visible_list = []
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
 
 ######## PUTANGINA DAPAT MAPAGANA NATIN YUNG COMPARISON TAPOS BIGLANG MAY ARITHMETIC PUTANGINA!!!!
 
@@ -216,23 +213,6 @@ def evaluateInfinite(infiList, legit_symbol_table):
         if not winPresent:
             return False
         return True
-<<<<<<< HEAD
-
-
-def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_table,line_table_without_groupings):
-
-    visible_list = []
-
-    obtw_flag = False
-
-    orly_flag = False
-    yarly_chosen = False
-    nowai_chosen = False
-    yarly_flag = False
-    nowai_flag = False
-    goeval_flag = False
-
-=======
 
 
 def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_without_groupings):
@@ -246,21 +226,14 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
     nowai_flag = False
     goeval_flag = False
 
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
     wtf_flag = False
     omg_flag = False
     omgwtf_flag = False
     switch_flag = False
 
-<<<<<<< HEAD
-    current_line = starting_line
-
-    for line in range(starting_line,len(symbol_table)):
-=======
 
 
     for line in range(len(symbol_table)):
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
         #print("HELLLLLLLLLLLLLLLLLLLLLLLLLL")
         #print(symbol_table[line][0])
         #print("marker")
@@ -512,7 +485,6 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             print(value)
 
                         elif symbol_table[line][1][0] in infinite_keywords:
-<<<<<<< HEAD
 
                             for elem in legit_symbol_table:
                                 if elem[0] == "IT":
@@ -523,18 +495,6 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                         elem[2] = "FAIL"
                                     elem[1] = "TROOF"
 
-=======
-
-                            for elem in legit_symbol_table:
-                                if elem[0] == "IT":
-                                    value = evaluateInfinite(symbol_table[line][1], legit_symbol_table)
-                                    if value:
-                                        elem[2] = "WIN"
-                                    else:
-                                        elem[2] = "FAIL"
-                                    elem[1] = "TROOF"
-
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
                             print(legit_symbol_table)
                             print(">>>>>INFINITE VALUE: ", value)
 
@@ -934,24 +894,11 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             if ele[0] == symbol_table[line][0]:
                                 ele[2] = symbol_table[line][2]
 
-<<<<<<< HEAD
-                elif symbol_table[line][0] == "GIMMEH":
-                    return visible_list, current_line, lexemes_table, legit_symbol_table, line_table_without_groupings
-        current_line += 1
-
-            # print(legit_symbol_table)
-
-    for element in legit_symbol_table:
-        print(element)
-
-    return visible_list, current_line, lexemes_table, legit_symbol_table, line_table_without_groupings
-=======
 
             print(legit_symbol_table)
 
     for element in legit_symbol_table:
         print(element)
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
 
 code7 = '''
 BTW for switch
@@ -989,10 +936,7 @@ BTW for if-else statements
 HAI
   I HAS A a ITZ 12
   I HAS A b ITZ 5
-<<<<<<< HEAD
-=======
 
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
   BOTH SAEM 18 AN 15
   O RLY?
     YA RLY
@@ -1008,6 +952,7 @@ HAI
       DIFFRINT 18 AN 18
       VISIBLE IT
   OIC
+
 KTHXBYE
 '''
 
@@ -1021,6 +966,7 @@ HAI
   I HAS A var3 ITZ "seventeen"
   I HAS A var4 ITZ 5.26
   I HAS A var5 ITZ WIN
+
   BTW initialization of variable using variable
   I HAS A var6 ITZ var2
   BTW initialization of variable using expressions
@@ -1029,6 +975,7 @@ HAI
   I HAS A var9 ITZ DIFFRINT 1 AN 1
   I HAS A var10 ITZ DIFFRINT 2 AN 1
   I HAS A var11 ITZ NOT WIN
+
   BTW printing for validation
   OBTW
     if your interpreter cannot print variables
@@ -1095,6 +1042,7 @@ HAI
   I HAS A var6
   I HAS A var7
   I HAS A var8
+
   BTW assignment of literals
   var1 R 17
   var2 R "seventeen"
@@ -1151,6 +1099,7 @@ HAI
   BTW with variables
   I HAS A var1 ITZ WIN
   I HAS A var2 ITZ FAIL
+
   NOT var1
   VISIBLE IT
   ALL OF var1 AN WIN AN WIN AN var2 AN WIN
@@ -1217,33 +1166,16 @@ KTHXBYE
 '''
 
 
-<<<<<<< HEAD
 symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code7)
-=======
-<<<<<<< HEAD
-# symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code5)
 
-# symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
+symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
 
-=======
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code5)
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
->>>>>>> 83fb3c3848ca0efd81f21c1d31e83ed1a69b378c
-
-# print("BAGO MAG SEMANTICS")
-# for elem in legit_symbol_table:
-#     print(elem)
-
-<<<<<<< HEAD
-# SemanticsAnalyzer(0, symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings)
-=======
 
 '''print("BAGO MAG SEMANTICS")
 for elem in legit_symbol_table:
     print(elem)'''
 
 SemanticsAnalyzer(symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings)
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
 
 #guys tulog na tayo,
 #tama na siguro to
@@ -1253,8 +1185,4 @@ SemanticsAnalyzer(symbol_table,lexemes_table,legit_symbol_table,line_table_witho
 #tangina
 #GOODNIGHT
 #MATULOG NA TAYO AWAT NA MUNA
-<<<<<<< HEAD
-# print(visible_list)
-=======
 print(visible_list)
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
