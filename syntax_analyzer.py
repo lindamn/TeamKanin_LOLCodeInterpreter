@@ -48,6 +48,12 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
     current_line_no = 0
 
+    if ["HAI"] not in symbol_table:
+        return "ERROR: Syntax error, Code Delimiter HAI is missing."
+    
+    if ["KTHXBYE"] not in symbol_table:
+        return "ERROR: Syntax error, Code Delimiter KTHXBYE is missing."
+
     for line in symbol_table:
         temp = copy.deepcopy(line)
 

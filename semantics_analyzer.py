@@ -410,9 +410,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                 #check if there are variables that do not exist in the symbol table
                 for index in range(0,len(line_table_without_groupings[line])):
                     #if keyword is a reserved keyword/int/float/str, just skip
-                    print("heto na nga", line_table_without_groupings[line][index])
                     if isinstance(line_table_without_groupings[line][index], int) or isinstance(line_table_without_groupings[line][index], float):
-                        print("dapat dumaan xea dito")
                         continue
                     elif line_table_without_groupings[line][index] in all_keywords or re.match(r"\-{0,1}[0-9]{1,}$",line_table_without_groupings[line][index]) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", line_table_without_groupings[line][index]) or re.match(r"[\"]([^\"]*?)[\"]", line_table_without_groupings[line][index]):
                         continue
@@ -425,6 +423,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                         if initialized_flag == False:
                             visible_list.append("ERROR: Semantic error, variable has not been initialized yet but still used at line " + str(current_line+1))
                             return visible_list, legit_symbol_table
+                            
                 if isinstance(symbol_table[line][0],list):
                     if symbol_table[line][0][0] in arithmetic_keywords:
 
