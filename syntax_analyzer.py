@@ -7,6 +7,10 @@ unary_keywords = ["NOT"]
 infinite_keywords = ["ALL OF", "ANY OF", "MKAY"]
 io_keywords = ["VISIBLE", "GIMMEH"]
 
+all_keywords = ["HAI", "KTHXBYE", "I HAS A", "ITZ", "VISIBLE", "GIMMEH", "IT", "SMOOSH", "ALL OF", "ANY OF", "MKAY","NOT", "AN", "SUM OF", "DIFF OF", "PRODUKT OF",
+"QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF", "BOTH OF", "EITHER OF", "WON OF", "BOTH SAEM", "DIFFRINT", "FAIL", "WIN", "R", "O RLY?", "YA RLY", "NO WAI",
+"OIC", "MEBBE", "WTF?", "OMG", "OMGWTF"]
+
 #check yung spelling ng mga keywords
 #check yung placement ng mga keywords at variables
 #check the number of operands per operation: all binary except any of an all of
@@ -30,6 +34,8 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
     checkCodeDelimiter(symbol_table)
     checkSoloKeywords(symbol_table)
+    
+    current_line_no = 0
 
     for line in symbol_table:
         temp = copy.deepcopy(line)
@@ -67,7 +73,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 if mkayCount > 1:
                     #ERROR: The line ends with MKAY but contains another MKAY in the middle
                     print("ERROR: Syntax error, expected 1 MKAY in line "+ str(symbol_table.index(line)) +" but found 2")
-                    return "ERROR: Syntax error, expected 1 MKAY in line "+ str(symbol_table.index(line)) +" but found 2"
+                    return "ERROR: Syntax error, expected 1 MKAY in line "+ str(symbol_table.index(line)+1) +" but found 2"
 
                 for element in line:
                     if element in boolean_keywords or element in unary_keywords:
@@ -77,7 +83,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
             elif (line[0] == "ALL OF" or line[0] == "ANY OF") and line[len(line)-1] != "MKAY":
                 #ERROR: There should be an MKAY at the end of the line
                 print("ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line)))
-                return "ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line))
+                return "ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line)+1)
 
             #deals w variable initialization
             if line[0] == "I HAS A":
@@ -278,8 +284,16 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
             #deals w arithmetic
             if line[0] in arithmetic_keywords:
+                for i in range(1, len(line_table_without_groupings[current_line_no])):
+                    current_keyword = line_table_without_groupings[current_line_no][i]
+                    # checks if only arithmetic expressions/ints/floats follow
+                    if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
+                        continue
+                    else:
+                        #checks if is is a variable name or if it is a reserved keyword
+                        if current_keyword in all_keywords and current_keyword != "AN":
+                            return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
                 Arithmetic(line)
-                #print(line)
 
             #deals w comparison
             if line[0] in comparison_keywords:
@@ -291,6 +305,8 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
             if line[0] in boolean_keywords or line[0] in unary_keywords:
                 Boolean(line)
                 #print(line)
+
+        current_line_no += 1
 
     #for updating of symbol/lexeme table using operator lists above
     for element in lexemes_table:
