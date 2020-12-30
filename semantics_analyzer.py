@@ -19,7 +19,6 @@ visible_list = []
 #ERROR BAWAL NESTED OTHER OPERATIONS SA ARITHMETIC
 def evaluate(nested_list,legit_symbol_table):
 
-
     if isinstance(nested_list, str):
 
         #dito ichecheck kung valid ba yung format ng operands
@@ -30,50 +29,113 @@ def evaluate(nested_list,legit_symbol_table):
                     if nested_list == elements[0]:
                         if sa.checkInt(elements[2]):
                             return int(elements[2])
-                        else:
+                        elif sa.checkFloat(nested_list):
                             return float(elements[2])
+                        else:
+                            return None
 
             if sa.checkInt(nested_list):
                 return int(nested_list)
-            else:
+            elif sa.checkFloat(nested_list):
                 return float(nested_list)
+            else:
+                return None
 
     op, operand1, an, operand2 = nested_list
     ops = {
-        "SUM OF":operator.add,
-        "PRODUKT OF":operator.mul,
-        "DIFF OF":operator.sub,
-        "QUOSHUNT OF":operator.truediv,
-        "MOD OF":operator.mod,
-        "BIGGR OF":max,
-        "SMALLR OF":min
+        "SUM OF":ADDoperator,
+        "PRODUKT OF":MULTIPLYoperator,
+        "DIFF OF":SUBTRACToperator,
+        "QUOSHUNT OF":DIVIDEoperator,
+        "MOD OF":MODULOoperator,
+        "BIGGR OF":MAXoperator,
+        "SMALLR OF":MINoperator
     }
     return ops[op](evaluate(operand1,legit_symbol_table), evaluate(operand2,legit_symbol_table))
 
+def NOToperator(op1):
+    if op1 == None:
+        return None
+    return not op1
+
+def MAXoperator(op1, op2):
+    if op1 == None or op2 == None:
+        return None
+    if op1 >= op2:
+        return op1
+    else:
+        return op2
+
+def MINoperator(op1, op2):
+    if op1 == None or op2 == None:
+        return None
+    if op1 <= op2:
+        return op1
+    else:
+        return op2   
+
+def ADDoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 + op2
+
+def MULTIPLYoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 * op2
+
+def SUBTRACToperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 - op2
+
+def DIVIDEoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 / op2
+
+def MODULOoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 % op2
+
 def ANDoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
     return op1 and op2
 
 def ORoperator(op1,op2):
+    if op1 == None or op2 == None:
+        return None
     return op1 or op2
 
 def XORoperator(op1, op2):
-  return (op1 or op2) and (not op1 or not op2)
+    if op1 == None or op2 == None:
+        return None
+    return (op1 or op2) and (not op1 or not op2)
+
+def EQUALSoperator(op1, op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 == op2
+
+def NOTEQUALoperator(op1, op2):
+    if op1 == None or op2 == None:
+        return None
+    return op1 != op2
 
 def evaluateComparison(nested_list,legit_symbol_table):
-
-
     if isinstance(nested_list, str):
 
         #dito ichecheck kung valid ba yung format ng operands
         if sa.checkInt(nested_list) or sa.checkFloat(nested_list) or sa.checkVar(nested_list):
 
-
             if sa.checkVar(nested_list):
                 for elements in legit_symbol_table:
                     if nested_list == elements[0]:
-                        print("nahanap niya sa symbol table legit")
-                        print(nested_list)
-                        print(elements[2])
+                        # print("nahanap niya sa symbol table legit")
+                        # print(nested_list)
+                        # print(elements[2])
                         if sa.checkInt(elements[2]):
                             return int(elements[2])
                         elif sa.checkFloat(elements[2]):
@@ -84,6 +146,8 @@ def evaluateComparison(nested_list,legit_symbol_table):
                             return False
                         elif re.match(r"[\"]([^\"]*?)[\"]",elements[2]):
                             return False
+                        else:
+                            return none
 
             if sa.checkInt(nested_list):
                 return int(nested_list)
@@ -93,21 +157,22 @@ def evaluateComparison(nested_list,legit_symbol_table):
                 return True
             elif nested_list=="FAIL":
                 return False
+            else:
+                return None
 
 
     op, operand1, an, operand2 = nested_list
     ops = {
-        "BOTH SAEM":operator.eq,
-        "DIFFRINT":operator.ne,
-        "BIGGR OF":max,
-        "SMALLR OF":min
+        "BOTH SAEM":EQUALSoperator,
+        "DIFFRINT":NOTEQUALoperator,
+        "BIGGR OF":MAXoperator,
+        "SMALLR OF":MINoperator
     }
 
     if isinstance(operand1, list) and operand1[0] in arithmetic_keywords:
         operand1 = str(evaluate(operand1, legit_symbol_table))
     if isinstance(operand2, list) and operand2[0] in arithmetic_keywords:
         operand2 = str(evaluate(operand2, legit_symbol_table))
-
 
     return ops[op](evaluateComparison(operand1,legit_symbol_table), evaluateComparison(operand2,legit_symbol_table))
 
@@ -121,6 +186,8 @@ def evaluateBoolean(nested_list,legit_symbol_table):
                 return True
             elif nested_list=="FAIL":
                 return False
+            else:
+                return None
 
             for elements in legit_symbol_table:
                 if elements[0]==nested_list:
@@ -128,6 +195,8 @@ def evaluateBoolean(nested_list,legit_symbol_table):
                         return True
                     elif elements[2]=="FAIL":
                         return False
+                    else:
+                        return None
 
     op, operand1, an, operand2 = nested_list
     ops = {
@@ -157,18 +226,24 @@ def evaluateNot(nested_list,legit_symbol_table):
                             return True
                         elif elements[2]=="FAIL":
                             return False
+                        else:
+                            return None
 
             if nested_list=="WIN":
                 return True
             elif nested_list=="FAIL":
                 return False
+            else:
+                return None
 
 
     op, operand1 = nested_list
     ops = {
-        "NOT":operator.not_
+        "NOT":NOToperator
     }
     return ops[op](evaluateComparison(operand1,legit_symbol_table))
+
+# ! TO DO: GAWIN YUNG NONE KINEME DITO
 
 def evaluateInfinite(infiList, legit_symbol_table):
 
@@ -181,8 +256,13 @@ def evaluateInfinite(infiList, legit_symbol_table):
                 if elem == "FAIL":
                     failPresent = True
                     break
+                elif elem == "WIN":
+                    continue
                 elif isinstance(elem, list):
-                    if not evaluateBoolean(elem, legit_symbol_table):
+                    value = evaluateBoolean(elem, legit_symbol_table)
+                    if value == None:
+                        return None
+                    if not value:
                         failPresent = True
                         break
                 elif sa.checkVar(elem):
@@ -191,20 +271,31 @@ def evaluateInfinite(infiList, legit_symbol_table):
                             if el[2] == "FAIL":
                                 failPresent = True
                                 break
+                            elif el[2] == "WIN":
+                                continue
+                            else:
+                                return None
+                else:
+                    return None
         if failPresent:
             return False
         return True
     else:
         winPresent = False
         for elem in infiList:
-            if elem == 'AN' or elem == "ANY OF":
+            if elem == 'AN' or elem == "ANY OF" or elem == "MKAY":
                 continue
             else:
                 if elem == "WIN":
                     winPresent = True
                     break
+                elif elem == "FAIL":
+                    continue
                 elif isinstance(elem, list):
-                    if not evaluateBoolean(elem, legit_symbol_table):
+                    value = evaluateBoolean(elem, legit_symbol_table)
+                    if value == None:
+                        return None
+                    if value:
                         winPresent = True
                         break
                 elif sa.checkVar(elem):
@@ -213,12 +304,20 @@ def evaluateInfinite(infiList, legit_symbol_table):
                             if el[2] == "WIN":
                                 winPresent = True
                                 break
+                            elif el[2] == "FAIL":
+                                continue
+                            else:
+                                return None
+                else:
+                    return None
         if not winPresent:
             return False
         return True
 
 
-def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_without_groupings):
+def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_table,line_table_without_groupings):
+
+    visible_list = []
 
     obtw_flag = False
 
@@ -234,9 +333,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
     omgwtf_flag = False
     switch_flag = False
 
+    current_line = starting_line
 
-
-    for line in range(len(symbol_table)):
+    for line in range(starting_line, len(symbol_table)):
         #print("HELLLLLLLLLLLLLLLLLLLLLLLLLL")
         #print(symbol_table[line][0])
         #print("marker")
@@ -313,6 +412,10 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                         for elem in legit_symbol_table:
                             if elem[0] == "IT":
                                 value = evaluate(symbol_table[line][0], legit_symbol_table)
+                                if value == None:
+                                    # print("?!?!?!JDSKJDKSJDKSJD")
+                                    visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                    return visible_list, legit_symbol_table
                                 elem[2] = value
                                 if isinstance(value,int):
                                     elem[1] = "NUMBR"
@@ -340,6 +443,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                         for elem in legit_symbol_table:
                             if elem[0] == "IT":
                                 value = evaluateComparison(symbol_table[line][0], legit_symbol_table)
+                                if value == None:
+                                    visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                    return visible_list, legit_symbol_table
                                 if flag == 1:
                                     elem[2] = "FAIL"
                                 else:
@@ -364,6 +470,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                         for elem in legit_symbol_table:
                             if elem[0] == "IT":
                                 value = evaluateBoolean(symbol_table[line][0], legit_symbol_table)
+                                if value == None:
+                                    visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                    return visible_list, legit_symbol_table
                                 if value:
                                     elem[2] = "WIN"
                                 else:
@@ -377,6 +486,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                         for elem in legit_symbol_table:
                             if elem[0] == "IT":
                                 value = evaluateNot(symbol_table[line][0], legit_symbol_table)
+                                if value == None:
+                                    visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                    return visible_list, legit_symbol_table
                                 if value:
                                     elem[2] = "WIN"
                                 else:
@@ -390,6 +502,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                         for elem in legit_symbol_table:
                             if elem[0] == "IT":
                                 value = evaluateInfinite(symbol_table[line][0], legit_symbol_table)
+                                if value == None:
+                                    visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                    return visible_list, legit_symbol_table
                                 if value:
                                     elem[2] = "WIN"
                                 else:
@@ -413,6 +528,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             for elem in legit_symbol_table:
                                 if elem[0] == "IT":
                                     value = evaluate(symbol_table[line][1], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     elem[2] = value
                                     if isinstance(value, int):
                                         elem[1] = "NUMBR"
@@ -445,6 +563,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             for elem in legit_symbol_table:
                                 if elem[0] == "IT":
                                     value = evaluateComparison(symbol_table[line][1], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     if flag == 1:
                                         elem[2] = "FAIL"
                                     else:
@@ -466,6 +587,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             for elem in legit_symbol_table:
                                 if elem[0] == "IT":
                                     value = evaluateBoolean(symbol_table[line][1], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -479,6 +603,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             for elem in legit_symbol_table:
                                 if elem[0] == "IT":
                                     value = evaluateNot(symbol_table[line][1], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -492,6 +619,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             for elem in legit_symbol_table:
                                 if elem[0] == "IT":
                                     value = evaluateInfinite(symbol_table[line][1], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -604,6 +734,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                     for elem in legit_symbol_table:
                                         if elem[0] == symbol_table[line][1]:
                                             value = evaluate(symbol_table[line][3], legit_symbol_table)
+                                            if value == None:
+                                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                                return visible_list, legit_symbol_table
                                             elem[2] = value
                                             if isinstance(value, int):
                                                 elem[1] = "NUMBR"
@@ -630,6 +763,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                     for elem in legit_symbol_table:
                                         if elem[0] == symbol_table[line][1]:
                                             value = evaluateComparison(symbol_table[line][3], legit_symbol_table)
+                                            if value == None:
+                                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                                return visible_list, legit_symbol_table
                                             if flag == 1:
                                                 elem[2] = "FAIL"
                                             else:
@@ -653,6 +789,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                     for elem in legit_symbol_table:
                                         if elem[0] == symbol_table[line][1]:
                                             value = evaluateBoolean(symbol_table[line][3], legit_symbol_table)
+                                            if value == None:
+                                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                                return visible_list, legit_symbol_table
                                             if value:
                                                 elem[2] = "WIN"
                                             else:
@@ -666,6 +805,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                     for elem in legit_symbol_table:
                                         if elem[0] == symbol_table[line][1]:
                                             value = evaluateNot(symbol_table[line][3], legit_symbol_table)
+                                            if value == None:
+                                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                                return visible_list, legit_symbol_table
                                             if value:
                                                 elem[2] = "WIN"
                                             else:
@@ -680,6 +822,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                     for elem in legit_symbol_table:
                                         if elem[0] == symbol_table[line][1]:
                                             value = evaluateInfinite(symbol_table[line][3], legit_symbol_table)
+                                            if value == None:
+                                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                                return visible_list, legit_symbol_table
                                             if value:
                                                 elem[2] = "WIN"
                                             else:
@@ -708,6 +853,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                     for elem in legit_symbol_table:
                         if elem[0] == "IT":
                             value = evaluate(symbol_table[line], legit_symbol_table)
+                            if value == None:
+                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                return visible_list, legit_symbol_table
                             elem[2] = value
                             if isinstance(value, int):
                                 elem[1] = "NUMBR"
@@ -739,6 +887,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                     for elem in legit_symbol_table:
                         if elem[0] == "IT":
                             value = evaluateComparison(symbol_table[line], legit_symbol_table)
+                            if value == None:
+                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                return visible_list, legit_symbol_table
                             if flag == 1:
                                 elem[2] = "FAIL"
                             else:
@@ -760,6 +911,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                     for elem in legit_symbol_table:
                         if elem[0] == "IT":
                             value = evaluateBoolean(symbol_table[line], legit_symbol_table)
+                            if value == None:
+                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                return visible_list, legit_symbol_table
                             if value:
                                 elem[2] = "WIN"
                             else:
@@ -773,6 +927,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                     for elem in legit_symbol_table:
                         if elem[0] == "IT":
                             value = evaluateNot(symbol_table[line], legit_symbol_table)
+                            if value == None:
+                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                return visible_list, legit_symbol_table
                             if value:
                                 elem[2] = "WIN"
                             else:
@@ -786,6 +943,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                     for elem in legit_symbol_table:
                         if elem[0] == "IT":
                             value = evaluateInfinite(symbol_table[line], legit_symbol_table)
+                            if value == None:
+                                visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                return visible_list, legit_symbol_table
                             if value:
                                 elem[2] = "WIN"
                             else:
@@ -803,6 +963,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             for elem in legit_symbol_table:
                                 if elem[0] == symbol_table[line][0]:
                                     value = evaluate(symbol_table[line][2], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     elem[2] = value
                                     if isinstance(value, int):
                                         elem[1] = "NUMBR"
@@ -836,6 +999,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                                     print("BAGO PUMASOK WAIT LANG")
                                     print(symbol_table[line][2])
                                     value = evaluateComparison(symbol_table[line][2], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     if flag == 1:
                                         elem[2] = "FAIL"
                                     else:
@@ -857,6 +1023,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             for elem in legit_symbol_table:
                                 if elem[0] == symbol_table[line][0]:
                                     value = evaluateBoolean(symbol_table[line][2], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -870,6 +1039,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             for elem in legit_symbol_table:
                                 if elem[0] == symbol_table[line][0]:
                                     value = evaluateNot(symbol_table[line][2], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -883,6 +1055,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             for elem in legit_symbol_table:
                                 if elem[0] == symbol_table[line][0]:
                                     value = evaluateInfinite(symbol_table[line][2], legit_symbol_table)
+                                    if value == None:
+                                        visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -897,11 +1072,14 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             if ele[0] == symbol_table[line][0]:
                                 ele[2] = symbol_table[line][2]
 
+                elif symbol_table[line][0] == "GIMMEH":
+                    return visible_list, current_line, lexemes_table, legit_symbol_table, line_table_without_groupings
+            # print(legit_symbol_table)
+        current_line += 1
+    # for element in legit_symbol_table:
+    #     print(element)
 
-            print(legit_symbol_table)
-
-    for element in legit_symbol_table:
-        print(element)
+    return visible_list, current_line, lexemes_table, legit_symbol_table, line_table_without_groupings
 
 code7 = '''
 BTW for switch
@@ -1169,16 +1347,16 @@ KTHXBYE
 '''
 
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code7)
+# symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code7)
 
-symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
+# symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
 
 
-'''print("BAGO MAG SEMANTICS")
-for elem in legit_symbol_table:
-    print(elem)'''
+# '''print("BAGO MAG SEMANTICS")
+# for elem in legit_symbol_table:
+#     print(elem)'''
 
-SemanticsAnalyzer(symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings)
+# SemanticsAnalyzer(symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings)
 
 #guys tulog na tayo,
 #tama na siguro to
