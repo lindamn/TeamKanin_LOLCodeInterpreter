@@ -199,7 +199,7 @@ def LexicalAnalyzer(code):
           #checks if token is keyword, or string, or int, or float, or var
           if not (symbol_table[i][j] in all_keywords or re.match(r"[\"]([^\"]*?)[\"]$",symbol_table[i][j]) or re.match(r"-{0,1}[0-9]{1,}$",symbol_table[i][j]) or re.match(r"-{0,1}[0-9]{1,}\.[0-9]{1,}$", symbol_table[i][j]) or re.match(r"[a-zA-Z]{1}([a-zA-Z0-9_])*$", symbol_table[i][j])):
             print("ERROR: Invalid token at line "+ str(symbol_table.index(symbol_table[i])) +": "+str(symbol_table[i][j]))
-            return i
+            return "ERROR: Invalid token at line "+ str(symbol_table.index(symbol_table[i])) +": "+str(symbol_table[i][j])
             
 
     #adds all lexemes in the symbol table

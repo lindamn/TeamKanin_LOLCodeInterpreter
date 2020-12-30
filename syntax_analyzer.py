@@ -67,7 +67,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 if mkayCount > 1:
                     #ERROR: The line ends with MKAY but contains another MKAY in the middle
                     print("ERROR: Syntax error, expected 1 MKAY in line "+ str(symbol_table.index(line)) +" but found 2")
-                    exit()
+                    return "ERROR: Syntax error, expected 1 MKAY in line "+ str(symbol_table.index(line)) +" but found 2"
 
                 for element in line:
                     if element in boolean_keywords or element in unary_keywords:
@@ -77,15 +77,10 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
             elif (line[0] == "ALL OF" or line[0] == "ANY OF") and line[len(line)-1] != "MKAY":
                 #ERROR: There should be an MKAY at the end of the line
                 print("ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line)))
-                exit()
+                return "ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line))
 
             #deals w variable initialization
             if line[0] == "I HAS A":
-
-                # check if the <var Ident> follows the right format
-                if not checkVar(line[1]):
-                    print("SYNTAX ERROR: line #idk variable identifier invalid syntax")
-                    exit()
 
                 new_variable = [None,None,None,None]
                 new_variable[0] = line[1]
@@ -140,7 +135,6 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
                 legit_symbol_table.append(new_variable)
 
-            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w assignment statements
             if len(line) > 1:
                 #print("pumasok dito")
@@ -282,20 +276,17 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                         Boolean(line)
                         #print(line)
 
-            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w arithmetic
             if line[0] in arithmetic_keywords:
                 Arithmetic(line)
                 #print(line)
 
-            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w comparison
             if line[0] in comparison_keywords:
                 print("nandito ako")
                 Comparison(line)
                 #print(line)
             
-            #! kelangan pa ayusin yung pagcheck ng valid format ng variable names/integers/etc
             #deals w boolean
             if line[0] in boolean_keywords or line[0] in unary_keywords:
                 Boolean(line)
@@ -595,20 +586,20 @@ def checkCodeDelimiter(symbol_table):
                 elif line[0] == pair[0] and startPresent:       #may start na ulet kahit di pa naend yung taas (FOR HAI ONLI)
                     #ERROR: Started a new block without closing the prior block
                     print("ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex))
-                    exit()
+                    return "ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex)
                 elif code_delimiters_pairs.index(pair)!= 0 and (line[0] == pair[0] or line[0] == pair[2]) and startPresent:       #may start na ulet kahit di pa naend yung taas
                     #ERROR: Started a new block without closing the prior block (FOR CONDITIONALS)
                     print("ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex))
-                    exit()
+                    return "ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex)
                 elif line[0] == pair[1] and not startPresent:   #may end pero walang start      
                     #ERROR: No start function for block but a block is supposedly closed 
                     print("ERROR: Syntax error, unexpected character at line "+str(symbol_table.index(line)+1))
-                    exit()
+                    return "ERROR: Syntax error, unexpected character at line "+str(symbol_table.index(line)+1)
 
         if startPresent:        #may start pero never naclose
             #ERROR: Block was never closed
             print("ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex))
-            exit()
+            return "ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex)
 
 def checkSoloKeywords(symbol_table):
     solo_in_line_keywords_list = ['HAI', 'KTHXBYE', 'O RLY?', 'YA RLY', 'NO WAI', 'MEBBE', 'WTF?', 'OMGWTF', 'GTFO', 'OIC']
@@ -616,7 +607,7 @@ def checkSoloKeywords(symbol_table):
         if line != [] and line[0] in solo_in_line_keywords_list and len(line) != 1:
             #ERROR: Unexpected word after a keyword
             print("ERROR: Syntax error, unexpected character after keyword "+ str(line[0]) +" in line "+ str(symbol_table.index(line)+1))
-            exit()
+            return "ERROR: Syntax error, unexpected character after keyword "+ str(line[0]) +" in line "+ str(symbol_table.index(line)+1)
 
 
 code7 = '''
@@ -799,7 +790,7 @@ HAI
   VISIBLE IT
   NOT WIN
   VISIBLE IT
-  ALL OF WIN AN WIN AN WIN AN FAIL AN WIN MKAY
+  ALL OF WIN AN WIN AN MKAY WIN AN FAIL AN WIN MKAY
   VISIBLE IT
   ANY OF WIN AN WIN AN WIN AN FAIL AN WIN MKAY
   VISIBLE IT
@@ -880,7 +871,7 @@ HAI
 KTHXBYE
 '''
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code6)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code3)
 
 SyntaxAnalyzer(symbol_table, lexemes_table)
 
