@@ -11,6 +11,8 @@ io_keywords = ["VISIBLE", "GIMMEH"]
 #check yung placement ng mga keywords at variables
 #check the number of operands per operation: all binary except any of an all of
 
+operations_list = []            #contains all operations and their line #s
+
 def SyntaxAnalyzer(symbol_table, lexemes_table):
 
     line_table_without_groupings = copy.deepcopy(symbol_table)
@@ -28,8 +30,17 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
     it_variable = ["IT", "NOOB", None, None]
     legit_symbol_table.append(it_variable)
 
-    checkCodeDelimiter(symbol_table)
-    checkSoloKeywords(symbol_table)
+    codeDelimiters = checkCodeDelimiter(symbol_table)
+    if codeDelimiters != True:
+        return codeDelimiters
+    
+    soloKeywords = checkSoloKeywords(symbol_table)
+    if soloKeywords != True:
+        return soloKeywords
+
+    operationsLine = checkOperationsLine(line_table_without_groupings)
+    if operationsLine != True:
+        return operationsLine
 
     for line in symbol_table:
         temp = copy.deepcopy(line)
@@ -41,21 +52,21 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
             if line[0] == "VISIBLE":
                 while True:
                     if line[idx] in arithmetic_keywords:
-                        Arithmetic(line)
+                        Arithmetic(line, symbol_table.index(line)+1)
                     elif line[idx] in comparison_keywords:
-                        Comparison(line)
+                        Comparison(line, symbol_table.index(line)+1)
                     elif line[idx] in boolean_keywords:
-                        Boolean(line)
+                        Boolean(line, symbol_table.index(line)+1)
                     idx += 1
                     if idx == len(line):
                         break 
                 
                 if line[1] in arithmetic_keywords:
-                    Arithmetic(line)
+                    Arithmetic(line, symbol_table.index(line)+1)
                 elif line[1] in comparison_keywords:
-                    Comparison(line)
+                    Comparison(line, symbol_table.index(line)+1)
                 elif line[1] in boolean_keywords:
-                    Boolean(line)
+                    Boolean(line, symbol_table.index(line)+1)
 
             #deals with infinite expressions
             if (line[0] == "ALL OF" or line[0] == "ANY OF") and line[len(line)-1] == "MKAY":
@@ -71,7 +82,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
                 for element in line:
                     if element in boolean_keywords or element in unary_keywords:
-                        Boolean(line)
+                        Boolean(line, symbol_table.index(line)+1)
                 lineIndex = symbol_table.index(line)
                 symbol_table[lineIndex] = [symbol_table[lineIndex]]
             elif (line[0] == "ALL OF" or line[0] == "ANY OF") and line[len(line)-1] != "MKAY":
@@ -89,13 +100,13 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 # group the <expression> first to reduce length of line to 4 with the last element as the value
                 if len(line) > 4:
                     if line[3] in arithmetic_keywords:
-                        Arithmetic(line)
+                        Arithmetic(line, symbol_table.index(line)+1)
                         
                     elif line[3] in comparison_keywords:
-                        Comparison(line)
+                        Comparison(line, symbol_table.index(line)+1)
 
                     elif line[3] in boolean_keywords or line[3] in unary_keywords:
-                        Boolean(line)
+                        Boolean(line, symbol_table.index(line)+1)
 
                 # if I HAS A <var Ident>
                 # initialize the variable type into NOOB
@@ -147,11 +158,11 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
                     if len(line) > 3:
                         if line[2] in arithmetic_keywords:
-                            Arithmetic(line)
+                            Arithmetic(line, symbol_table.index(line)+1)
                         elif line[2] in comparison_keywords:
-                            Comparison(line)
+                            Comparison(line, symbol_table.index(line)+1)
                         elif line[2] in boolean_keywords or line[2] in unary_keywords:
-                            Boolean(line)
+                            Boolean(line, symbol_table.index(line)+1)
 
 
                     if len(line) == 3:
@@ -210,23 +221,23 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 if yarly_flag == True:
                     #continue hanggang sa makakita ng no wai
                     if line[0] in arithmetic_keywords:
-                        Arithmetic(line)
+                        Arithmetic(line, symbol_table.index(line)+1)
                         #print(line)
                     if line[0] in comparison_keywords:
-                        Comparison(line)
+                        Comparison(line, symbol_table.index(line)+1)
                         #print(line)
                     if line[0] in boolean_keywords or line[0] in unary_keywords:
-                        Boolean(line)
+                        Boolean(line, symbol_table.index(line)+1)
                         #print(line)
                 if nowai_flag == True:
                     if line[0] in arithmetic_keywords:
-                        Arithmetic(line)
+                        Arithmetic(line, symbol_table.index(line)+1)
                         #print(line)
                     if line[0] in comparison_keywords:
-                        Comparison(line)
+                        Comparison(line, symbol_table.index(line)+1)
                         #print(line)
                     if line[0] in boolean_keywords or line[0] in unary_keywords:
-                        Boolean(line)
+                        Boolean(line, symbol_table.index(line)+1)
                        #print(line)
 
             #deals w switch-case
@@ -251,13 +262,13 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                     omg_flag = True
                 if omg_flag == True:
                     if line[0] in arithmetic_keywords:
-                        Arithmetic(line)
+                        Arithmetic(line, symbol_table.index(line)+1)
                         #print(line)
                     if line[0] in comparison_keywords:
-                        Comparison(line)
+                        Comparison(line, symbol_table.index(line)+1)
                         #print(line)
                     if line[0] in boolean_keywords or line[0] in unary_keywords:
-                        Boolean(line)
+                        Boolean(line, symbol_table.index(line)+1)
                         #print(line)
                     if line[0] == "GTFO":
                         # print("omg ended")
@@ -267,29 +278,29 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                 if line[0] == "OMGWTF":
                     # print("default case")
                     if line[0] in arithmetic_keywords:
-                        Arithmetic(line)
+                        Arithmetic(line, symbol_table.index(line)+1)
                         #print(line)
                     if line[0] in comparison_keywords:
-                        Comparison(line)
+                        Comparison(line, symbol_table.index(line)+1)
                         #print(line)
                     if line[0] in boolean_keywords or line[0] in unary_keywords:
-                        Boolean(line)
+                        Boolean(line, symbol_table.index(line)+1)
                         #print(line)
 
             #deals w arithmetic
             if line[0] in arithmetic_keywords:
-                Arithmetic(line)
+                Arithmetic(line, symbol_table.index(line)+1)
                 #print(line)
 
             #deals w comparison
             if line[0] in comparison_keywords:
                 print("nandito ako")
-                Comparison(line)
+                Comparison(line, symbol_table.index(line)+1)
                 #print(line)
             
             #deals w boolean
             if line[0] in boolean_keywords or line[0] in unary_keywords:
-                Boolean(line)
+                Boolean(line, symbol_table.index(line)+1)
                 #print(line)
 
     #for updating of symbol/lexeme table using operator lists above
@@ -307,7 +318,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
     
     #UNCOMMENT TO CHECK THE FINAL lexemes_table AND THE symbol_table (code per line)
-    '''for i in range(len(lexemes_table)):
+    for i in range(len(lexemes_table)):
       print([lexemes_table[i].lexeme, lexemes_table[i].type])
 
     print()
@@ -319,7 +330,6 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
     for item in legit_symbol_table:
         print(item)
-    '''
 
     return symbol_table, lexemes_table, legit_symbol_table,line_table_without_groupings
 
@@ -333,7 +343,6 @@ def checkFloat(string):
         return True
     return False
 
-
 def checkVar(string):
     if re.match(r"[a-zA-Z]{1}[a-zA-Z0-9_]*", string):
         return True
@@ -344,29 +353,7 @@ def checkBoolean(string):
         return True
     return False
 
-# credits to https://stackoverflow.com/a/40775654
-
-# ERROR PAG MAY NESTED NA OTHER TYPE OF EXPRESSIONS NA DI ARITHMETIC
-def evaluate(nested_list):
-    if isinstance(nested_list, str):
-        #dito ichecheck kung valid ba yung format ng operands
-        if checkInt(nested_list) or checkFloat(nested_list):
-            return float(nested_list)
-
-    op, operand1, an, operand2 = nested_list
-    ops = {
-        "SUM OF":operator.add,
-        "PRODUKT OF":operator.mul,
-        "DIFF OF":operator.sub,
-        "QUOSHUNT OF":operator.truediv,
-        "MOD OF":operator.mod,
-        "BIGGR OF":max,
-        "SMALLR OF":min
-    }
-
-    return ops[op](evaluate(operand1), evaluate(operand2))
-
-def Arithmetic(line):
+def Arithmetic(line, lineNumber):
     arithmetic_counter = 0
     for j in range(0, len(line)):
         if line[j] in arithmetic_keywords:
@@ -423,7 +410,7 @@ def Arithmetic(line):
                     line.pop(j-1)
                     break
 
-def Comparison(line):
+def Comparison(line, lineNumber):
     comparison_counter = 0
     for j in range(0, len(line)):
         if line[j] in comparison_keywords or line[j] in arithmetic_keywords:
@@ -453,11 +440,8 @@ def Comparison(line):
                             line.pop(j-1)
                             break
                         else:
-                            #print("Invalid input")
                             comparison_counter -= 1
                             break
-                        #print("hello")
-                        #print(line)
 
                 elif isinstance(line[j-1], list) and isinstance(line[j+1], str):
                     if line[j+1] in comparison_keywords or line[j+1] in arithmetic_keywords:
@@ -491,10 +475,8 @@ def Comparison(line):
                     line.pop(j-1)
                     line.pop(j-1)
                     break
-    #print(line)
 
-#Error: Kapag Infinite di pwedeng AN MKAY, dapat AN <var> or AN <literal> or AN <expression>
-def Boolean(line):
+def Boolean(line, lineNumber):
     boolean_counter = 0
     not_counter = 0
     for j in range(0, len(line)):
@@ -568,9 +550,6 @@ def Boolean(line):
                         line.pop(j-1)
                         break
         
-            
-    # print(line)
-
 def checkCodeDelimiter(symbol_table):
     code_delimiters_pairs = [['HAI', 'KTHXBYE'], ['O RLY?', 'OIC', 'WTF?'], ['WTF?', 'OIC', 'O RLY?']]
     for pair in code_delimiters_pairs:
@@ -600,6 +579,7 @@ def checkCodeDelimiter(symbol_table):
             #ERROR: Block was never closed
             print("ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex))
             return "ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex)
+    return True
 
 def checkSoloKeywords(symbol_table):
     solo_in_line_keywords_list = ['HAI', 'KTHXBYE', 'O RLY?', 'YA RLY', 'NO WAI', 'MEBBE', 'WTF?', 'OMGWTF', 'GTFO', 'OIC']
@@ -608,7 +588,158 @@ def checkSoloKeywords(symbol_table):
             #ERROR: Unexpected word after a keyword
             print("ERROR: Syntax error, unexpected character after keyword "+ str(line[0]) +" in line "+ str(symbol_table.index(line)+1))
             return "ERROR: Syntax error, unexpected character after keyword "+ str(line[0]) +" in line "+ str(symbol_table.index(line)+1)
+    return True
+    
+def checkOperationsLine(line_table_without_groupings):
+    binary_operators = ['SUM OF', 'DIFF OF', 'PRODUKT OF', 'QUOSHUNT OF', 'MOD OF', 'BIGGR OF', 'SMALLR OF', 'BOTH SAEM', 'DIFFRINT', 'BOTH OF', 'EITHER OF', 'WON OF']
 
+    for line in line_table_without_groupings:
+        print(line)
+        # if I HAS A <var> ITZ <expression>
+        if len(line) > 4 and line[0] == 'I HAS A' and line[2] == 'ITZ':
+            temp = copy.deepcopy(line)
+            for i in range(3):
+                temp.pop(0)
+            for i in range(len(temp)):
+                #bawal magkasunod na AN
+                if i > 0 and (temp[i] == 'AN' and temp[i-1] == 'AN'):
+                    #ERROR: Missing operand or misplace separator
+                    print("ERROR: Syntax error, missing operand or misplaced separator in line "+str(line_table_without_groupings.index(line)+1))
+                    return "ERROR: Syntax error, missing operand or misplaced separator in line "+str(line_table_without_groupings.index(line)+1)
+                #bawal magkatabi operand
+                if i > 0 and ((temp[i] != 'AN' and temp[i] not in binary_operators) and (temp[i-1] != 'AN' and temp[i-1] not in binary_operators)):
+                    #ERROR: Syntax error, missing separator
+                    print("ERROR: Syntax error, missing operand separator in line "+str(line_table_without_groupings.index(line)+1))
+                    return "ERROR: Syntax error, missing operand separator in line "+str(line_table_without_groupings.index(line)+1)
+                #bawal nasa gitna ng 2 operator yung operand
+                if i != 0 and i != len(temp)-1:
+                    if (temp[i-1] in binary_operators) and (temp[i] not in binary_operators and temp[i] != 'AN') and (temp[i+1] in binary_operators):
+                        #ERROR: Syntax error, missing separator
+                        print("ERROR: Syntax error, missing separator in line "+str(line_table_without_groupings.index(line)+1))
+                        return "ERROR: Syntax error, missing separator in line "+str(line_table_without_groupings.index(line)+1)
+                #bawal <operator> AN
+                if i > 0 and temp[i] == 'AN' and temp[i-1] in binary_operators:
+                    #ERROR: Syntax error, missing operand
+                    print("ERROR: Syntax error, missing operand in line "+str(line_table_without_groupings.index(line)+1))
+                    return "ERROR: Syntax error, missing operand in line "+str(line_table_without_groupings.index(line)+1)
+
+            #number of ops must be equal to number of ANs
+            ops_count = 0
+            an_count = 0
+            for elem in temp:
+                if elem in binary_operators:
+                    ops_count += 1
+                if elem == 'AN':
+                    an_count += 1
+
+            if ops_count != an_count:
+                #ERROR: Syntax error, operator count does not match with separator count
+                print("ERROR: Syntax error, operator count does not match separator count in line "+str(line_table_without_groupings.index(line)+1))
+                return "ERROR: Syntax error, operator count does not match separator count in line "+str(line_table_without_groupings.index(line)+1)
+                
+            #dapat laging AN <operand> yung dulo
+            if temp[-2] != 'AN' or temp[-1] == 'AN' or temp[-1] in binary_operators:
+                #ERROR: Syntax error, invalid format of operation
+                print("ERROR: Syntax error, invalid format of operation in line "+str(line_table_without_groupings.index(line)+1))
+                return "ERROR: Syntax error, invalid format of operation in line "+str(line_table_without_groupings.index(line)+1)
+
+        # if <expression>
+        if line != [] and line[0] in binary_operators:
+            for i in range(len(line)):
+                #bawal magkasunod na AN
+                if i > 0 and (line[i] == 'AN' and line[i-1] == 'AN'):
+                    #ERROR: Missing operand or misplace separator
+                    print("ERROR: Syntax error, missing operand or misplaced separator in line "+str(line_table_without_groupings.index(line)+1))
+                    return "ERROR: Syntax error, missing operand or misplaced separator in line "+str(line_table_without_groupings.index(line)+1)
+                #bawal magkatabi operand
+                if i > 0 and ((line[i] != 'AN' and line[i] not in binary_operators) and (line[i-1] != 'AN' and line[i-1] not in binary_operators)):
+                    #ERROR: Syntax error, missing separator
+                    print("ERROR: Syntax error, missing operand separator in line "+str(line_table_without_groupings.index(line)+1))
+                    return "ERROR: Syntax error, missing operand separator in line "+str(line_table_without_groupings.index(line)+1)
+                #bawal nasa gitna ng 2 operator yung operand
+                if i != 0 and i != len(line)-1:
+                    if (line[i-1] in binary_operators) and (line[i] not in binary_operators and line[i] != 'AN') and (line[i+1] in binary_operators):
+                        #ERROR: Syntax error, missing separator
+                        print("ERROR: Syntax error, missing separator in line "+str(line_table_without_groupings.index(line)+1))
+                        return "ERROR: Syntax error, missing separator in line "+str(line_table_without_groupings.index(line)+1)
+                #bawal <operator> AN
+                if i > 0 and line[i] == 'AN' and line[i-1] in binary_operators:
+                    #ERROR: Syntax error, missing operand
+                    print("ERROR: Syntax error, missing operand in line "+str(line_table_without_groupings.index(line)+1))
+                    return "ERROR: Syntax error, missing operand in line "+str(line_table_without_groupings.index(line)+1)
+
+            #number of ops must be equal to number of ANs
+            ops_count = 0
+            an_count = 0
+            for elem in line:
+                if elem in binary_operators:
+                    ops_count += 1
+                if elem == 'AN':
+                    an_count += 1
+            if ops_count != an_count:
+                #ERROR: Syntax error, operator count does not match with separator count
+                print("ERROR: Syntax error, operator count does not match separator count in line "+str(line_table_without_groupings.index(line)+1))
+                return "ERROR: Syntax error, operator count does not match separator count in line "+str(line_table_without_groupings.index(line)+1)
+                
+            #dapat laging AN <operand> yung dulo
+            if line[-2] != 'AN' or line[-1] == 'AN' or line[-1] in binary_operators:
+                #ERROR: Syntax error, invalid format of operation
+                print("ERROR: Syntax error, invalid format of operation in line "+str(line_table_without_groupings.index(line)+1))
+                return "ERROR: Syntax error, invalid format of operation in line "+str(line_table_without_groupings.index(line)+1)
+
+        #if <var> R <expression>
+        if len(line) > 3 and line[1] == 'R':
+            temp = copy.deepcopy(line)
+            for i in range(2):
+                temp.pop(0)
+            for i in range(len(temp)):
+                #bawal magkasunod na AN
+                if i > 0 and (temp[i] == 'AN' and temp[i-1] == 'AN'):
+                    #ERROR: Missing operand or misplace separator
+                    print("ERROR: Syntax error, missing operand or misplaced separator in line "+str(line_table_without_groupings.index(line)+1))
+                    return "ERROR: Syntax error, missing operand or misplaced separator in line "+str(line_table_without_groupings.index(line)+1)
+                #bawal magkatabi operand
+                if i > 0 and ((temp[i] != 'AN' and temp[i] not in binary_operators) and (temp[i-1] != 'AN' and temp[i-1] not in binary_operators)):
+                    #ERROR: Syntax error, missing separator
+                    print("ERROR: Syntax error, missing operand separator in line "+str(line_table_without_groupings.index(line)+1))
+                    return "ERROR: Syntax error, missing operand separator in line "+str(line_table_without_groupings.index(line)+1)
+                #bawal nasa gitna ng 2 operator yung operand
+                if i != 0 and i != len(temp)-1:
+                    if (temp[i-1] in binary_operators) and (temp[i] not in binary_operators and temp[i] != 'AN') and (temp[i+1] in binary_operators):
+                        #ERROR: Syntax error, missing separator
+                        print("ERROR: Syntax error, missing separator in line "+str(line_table_without_groupings.index(line)+1))
+                        return "ERROR: Syntax error, missing separator in line "+str(line_table_without_groupings.index(line)+1)
+                #bawal <operator> AN
+                if i > 0 and temp[i] == 'AN' and temp[i-1] in binary_operators:
+                    #ERROR: Syntax error, missing operand
+                    print("ERROR: Syntax error, missing operand in line "+str(line_table_without_groupings.index(line)+1))
+                    return "ERROR: Syntax error, missing operand in line "+str(line_table_without_groupings.index(line)+1)
+
+            #number of ops must be equal to number of ANs
+            ops_count = 0
+            an_count = 0
+            for elem in temp:
+                if elem in binary_operators:
+                    ops_count += 1
+                if elem == 'AN':
+                    an_count += 1
+
+            if ops_count != an_count:
+                #ERROR: Syntax error, operator count does not match with separator count
+                print("ERROR: Syntax error, operator count does not match separator count in line "+str(line_table_without_groupings.index(line)+1))
+                return "ERROR: Syntax error, operator count does not match separator count in line "+str(line_table_without_groupings.index(line)+1)
+                
+            #dapat laging AN <operand> yung dulo
+            if temp[-2] != 'AN' or temp[-1] == 'AN' or temp[-1] in binary_operators:
+                #ERROR: Syntax error, invalid format of operation
+                print("ERROR: Syntax error, invalid format of operation in line "+str(line_table_without_groupings.index(line)+1))
+                return "ERROR: Syntax error, invalid format of operation in line "+str(line_table_without_groupings.index(line)+1)
+
+        # if VISIBLE <expression> or VISIBLE <literal> <exp> <literal>
+
+    return True
+
+            
 
 code7 = '''
 BTW for switch
@@ -726,7 +857,7 @@ HAI
     BIGGR OF PRODUKT OF 11 AN 2 AN QUOSHUNT OF SUM OF 3 AN 5 AN 2
     VISIBLE IT
     BTW arithmetic with variables
-    I HAS A var1 ITZ 5
+    I HAS A var1 ITZ SUM OF 1 AN 2
     I HAS A var2 ITZ 3
     DIFF OF var2 AN var1
     VISIBLE IT
@@ -871,7 +1002,7 @@ HAI
 KTHXBYE
 '''
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code3)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code)
 
 SyntaxAnalyzer(symbol_table, lexemes_table)
 

@@ -14,6 +14,9 @@ visible_list = []
 #check if sumusunod sa rules ng tamang logic yung mga statements
 #check if tama yung mga data type na kasama sa mga operations
 
+
+# credits to https://stackoverflow.com/a/40775654
+#ERROR BAWAL NESTED OTHER OPERATIONS SA ARITHMETIC
 def evaluate(nested_list,legit_symbol_table):
 
 
