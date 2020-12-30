@@ -215,7 +215,9 @@ def evaluateInfinite(infiList, legit_symbol_table):
         return True
 
 
-def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_without_groupings):
+def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_table,line_table_without_groupings):
+
+    visible_list = []
 
     obtw_flag = False
 
@@ -231,9 +233,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
     omgwtf_flag = False
     switch_flag = False
 
+    current_line = starting_line
 
-
-    for line in range(len(symbol_table)):
+    for line in range(starting_line, len(symbol_table)):
         #print("HELLLLLLLLLLLLLLLLLLLLLLLLLL")
         #print(symbol_table[line][0])
         #print("marker")
@@ -894,11 +896,14 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                             if ele[0] == symbol_table[line][0]:
                                 ele[2] = symbol_table[line][2]
 
+                elif symbol_table[line][0] == "GIMMEH":
+                    return visible_list, current_line, lexemes_table, legit_symbol_table, line_table_without_groupings
+            # print(legit_symbol_table)
+        current_line += 1
+    # for element in legit_symbol_table:
+    #     print(element)
 
-            print(legit_symbol_table)
-
-    for element in legit_symbol_table:
-        print(element)
+    return visible_list, current_line, lexemes_table, legit_symbol_table, line_table_without_groupings
 
 code7 = '''
 BTW for switch
@@ -1166,16 +1171,16 @@ KTHXBYE
 '''
 
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code7)
+# symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code7)
 
-symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
+# symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
 
 
-'''print("BAGO MAG SEMANTICS")
-for elem in legit_symbol_table:
-    print(elem)'''
+# '''print("BAGO MAG SEMANTICS")
+# for elem in legit_symbol_table:
+#     print(elem)'''
 
-SemanticsAnalyzer(symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings)
+# SemanticsAnalyzer(symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings)
 
 #guys tulog na tayo,
 #tama na siguro to

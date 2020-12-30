@@ -174,13 +174,9 @@ class Ui_MainWindow(object):
                 
                 tokenized_flag = True
 
-<<<<<<< HEAD
             # check lang if hindi line # yung nirereturn ni lexeme, if int yung nireturn ibig sabihin may maling token
             if not isinstance(lexemes, int):
                 
-=======
-            if not isinstance(lexemes, int):
->>>>>>> 299215801b05de88ef9e8068603e9430f7dd518e
                 for i in range(0, len(lexemes[1])):
                     self.lexemes_list.insertRow(i)
                     self.lexemes_list.setItem(i,0,QtWidgets.QTableWidgetItem(lexemes[1][i].lexeme))
@@ -189,6 +185,9 @@ class Ui_MainWindow(object):
                 #execute na yung syntax analyzer
                 if syntactically_correct_flag == False:
                     symbol_table = sya.SyntaxAnalyzer(lexemes[0],lexemes[1])
+                    if isinstance(symbol_table, str):
+                        self.code_output.append(symbol_table)
+                        return
                     syntactically_correct_flag = True
 
                 # check lang if tama yung nirereturn ng syntax analyzer
