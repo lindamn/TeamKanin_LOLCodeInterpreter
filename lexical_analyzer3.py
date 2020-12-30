@@ -249,6 +249,20 @@ def LexicalAnalyzer(code):
         element.type = "Break Keyword"
       elif element.lexeme == "OIC":
         element.type = "Conditional Block Delimiter"
+      elif element.lexeme == "SUM OF":
+        element.type = "ADD Operator"
+      elif element.lexeme == "DIFF OF":
+        element.type = "SUBTRACT Operator"
+      elif element.lexeme == "PRODUKT OF":
+        element.type = "MULTIPLY Operator"
+      elif element.lexeme == "QUOSHUNT OF":
+        element.type = "DIVIDE Operator"
+      elif element.lexeme == "MOD OF":
+        element.type = "MODULO Operator"
+      elif element.lexeme == "BIGGR OF":
+        element.type = "MAX Operator"
+      elif element.lexeme == "SMALLR OF":
+        element.type = "MIN Operator"
       elif element.lexeme == "EITHER OF":
         element.type = "OR Operator"
       elif element.lexeme == "BOTH OF":
@@ -259,6 +273,12 @@ def LexicalAnalyzer(code):
         element.type = "Infinite Arity Boolean Operation Delimiter"
       elif element.lexeme == "ANY OF":
         element.type = "Infinite Arity Boolean Operation Delimiter"
+      elif element.lexeme == "BOTH SAEM":
+        element.type = "EQUALS Operator"
+      elif element.lexeme == "DIFFRINT":
+        element.type = "NOT EQUAL Operator"
+      elif element.lexeme == "NOT":
+        element.type = "NOT Operator"
       elif element.lexeme == "MKAY":
         element.type = "Infinite Arity Boolean Operation Delimiter"
       elif re.match(r"^[A-z]{1}([A-z0-9_])*", element.lexeme) :
@@ -269,10 +289,10 @@ def LexicalAnalyzer(code):
       print([lexemes_table[i].lexeme, lexemes_table[i].type])
 
     print()
-
+    
     for line in symbol_table:
-      print(line)'''
-
+      print(line)
+    '''
     return symbol_table, lexemes_table
 
 code7 = '''
@@ -539,4 +559,4 @@ HAI
   VISIBLE "u gif meh " input "!"
 KTHXBYE
 '''
-LexicalAnalyzer(code)
+# LexicalAnalyzer(code)

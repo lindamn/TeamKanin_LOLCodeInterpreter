@@ -98,7 +98,8 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                         Boolean(line)
                 lineIndex = symbol_table.index(line)
                 symbol_table[lineIndex] = [symbol_table[lineIndex]]
-            elif (line[0] == "ALL OF" or line[0] == "ANY OF") and line[len(line)-1] != "MKAY":
+            elif (line[0] == "ALL OF" or line[0] == "ANY OF") and line[-1] != "MKAY":
+                print(line)
                 #ERROR: There should be an MKAY at the end of the line
                 # print("ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line)))
                 return "ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line)+1)

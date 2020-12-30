@@ -412,7 +412,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                 if value == None:
                                     # print("?!?!?!JDSKJDKSJDKSJD")
                                     visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                    return visible_list
+                                    return visible_list, legit_symbol_table
                                 elem[2] = value
                                 if isinstance(value,int):
                                     elem[1] = "NUMBR"
@@ -442,7 +442,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                 value = evaluateComparison(symbol_table[line][0], legit_symbol_table)
                                 if value == None:
                                     visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                    return visible_list
+                                    return visible_list, legit_symbol_table
                                 if flag == 1:
                                     elem[2] = "FAIL"
                                 else:
@@ -469,7 +469,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                 value = evaluateBoolean(symbol_table[line][0], legit_symbol_table)
                                 if value == None:
                                     visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                    return visible_list
+                                    return visible_list, legit_symbol_table
                                 if value:
                                     elem[2] = "WIN"
                                 else:
@@ -485,7 +485,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                 value = evaluateNot(symbol_table[line][0], legit_symbol_table)
                                 if value == None:
                                     visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                    return visible_list
+                                    return visible_list, legit_symbol_table
                                 if value:
                                     elem[2] = "WIN"
                                 else:
@@ -501,7 +501,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                 value = evaluateInfinite(symbol_table[line][0], legit_symbol_table)
                                 if value == None:
                                     visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                    return visible_list
+                                    return visible_list, legit_symbol_table
                                 if value:
                                     elem[2] = "WIN"
                                 else:
@@ -527,7 +527,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluate(symbol_table[line][1], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     elem[2] = value
                                     if isinstance(value, int):
                                         elem[1] = "NUMBR"
@@ -562,7 +562,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluateComparison(symbol_table[line][1], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     if flag == 1:
                                         elem[2] = "FAIL"
                                     else:
@@ -586,7 +586,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluateBoolean(symbol_table[line][1], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -602,7 +602,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluateNot(symbol_table[line][1], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -618,7 +618,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluateInfinite(symbol_table[line][1], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -733,7 +733,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                             value = evaluate(symbol_table[line][3], legit_symbol_table)
                                             if value == None:
                                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                                return visible_list
+                                                return visible_list, legit_symbol_table
                                             elem[2] = value
                                             if isinstance(value, int):
                                                 elem[1] = "NUMBR"
@@ -762,7 +762,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                             value = evaluateComparison(symbol_table[line][3], legit_symbol_table)
                                             if value == None:
                                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                                return visible_list
+                                                return visible_list, legit_symbol_table
                                             if flag == 1:
                                                 elem[2] = "FAIL"
                                             else:
@@ -788,7 +788,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                             value = evaluateBoolean(symbol_table[line][3], legit_symbol_table)
                                             if value == None:
                                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                                return visible_list
+                                                return visible_list, legit_symbol_table
                                             if value:
                                                 elem[2] = "WIN"
                                             else:
@@ -804,7 +804,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                             value = evaluateNot(symbol_table[line][3], legit_symbol_table)
                                             if value == None:
                                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                                return visible_list
+                                                return visible_list, legit_symbol_table
                                             if value:
                                                 elem[2] = "WIN"
                                             else:
@@ -821,7 +821,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                             value = evaluateInfinite(symbol_table[line][3], legit_symbol_table)
                                             if value == None:
                                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                                return visible_list
+                                                return visible_list, legit_symbol_table
                                             if value:
                                                 elem[2] = "WIN"
                                             else:
@@ -852,7 +852,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                             value = evaluate(symbol_table[line], legit_symbol_table)
                             if value == None:
                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                return visible_list
+                                return visible_list, legit_symbol_table
                             elem[2] = value
                             if isinstance(value, int):
                                 elem[1] = "NUMBR"
@@ -886,7 +886,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                             value = evaluateComparison(symbol_table[line], legit_symbol_table)
                             if value == None:
                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                return visible_list
+                                return visible_list, legit_symbol_table
                             if flag == 1:
                                 elem[2] = "FAIL"
                             else:
@@ -910,7 +910,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                             value = evaluateBoolean(symbol_table[line], legit_symbol_table)
                             if value == None:
                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                return visible_list
+                                return visible_list, legit_symbol_table
                             if value:
                                 elem[2] = "WIN"
                             else:
@@ -926,7 +926,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                             value = evaluateNot(symbol_table[line], legit_symbol_table)
                             if value == None:
                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                return visible_list
+                                return visible_list, legit_symbol_table
                             if value:
                                 elem[2] = "WIN"
                             else:
@@ -942,7 +942,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                             value = evaluateInfinite(symbol_table[line], legit_symbol_table)
                             if value == None:
                                 visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                return visible_list
+                                return visible_list, legit_symbol_table
                             if value:
                                 elem[2] = "WIN"
                             else:
@@ -962,7 +962,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluate(symbol_table[line][2], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     elem[2] = value
                                     if isinstance(value, int):
                                         elem[1] = "NUMBR"
@@ -998,7 +998,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluateComparison(symbol_table[line][2], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     if flag == 1:
                                         elem[2] = "FAIL"
                                     else:
@@ -1022,7 +1022,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluateBoolean(symbol_table[line][2], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -1038,7 +1038,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluateNot(symbol_table[line][2], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:
@@ -1054,7 +1054,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                                     value = evaluateInfinite(symbol_table[line][2], legit_symbol_table)
                                     if value == None:
                                         visible_list.append("ERROR: Semantic error, incorrect data type to evaluate at line " + str(current_line+1))
-                                        return visible_list
+                                        return visible_list, legit_symbol_table
                                     if value:
                                         elem[2] = "WIN"
                                     else:

@@ -188,6 +188,11 @@ class Ui_MainWindow(object):
                     #magpprint kapag error message lang nireturn ni syntax analyzer
                     if isinstance(symbol_table, str):
                         self.code_output.append(symbol_table)
+                        finished_flag = True
+                        current_line = 0
+                        initialized_flag = False
+                        tokenized_flag = False
+                        syntactically_correct_flag = False
                         return
                     syntactically_correct_flag = True
 
@@ -219,9 +224,19 @@ class Ui_MainWindow(object):
             #idadaan na sa semantics analyzer and ieexecute :>
             final = sea.SemanticsAnalyzer(current_line,symbol_table[0],symbol_table[1],symbol_table[2],symbol_table[3])
 
-            if isinstance(final, list):
-                for j in range(0, len(final)):
-                    self.code_output.append(str(final[j]))
+            # if there is an error
+            if len(final) == 2:
+                #print yung lines bago magkaerror
+                for j in range(0, len(final[0])):
+                    self.code_output.append(str(final[0][j]))
+                #ayusin symbol table bago magkaerror
+                for j in range(0, len(final[1])):
+                    if isinstance(final[1][j][2], str):
+                        self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(final[1][j][2]))
+                    elif final[1][j][2] == None:
+                        self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem("NOOB"))
+                    else:
+                        self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(str(final[1][j][2])))
                 finished_flag = True
                 current_line = 0
                 initialized_flag = False
