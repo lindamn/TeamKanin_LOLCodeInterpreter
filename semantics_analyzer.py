@@ -11,6 +11,8 @@ visible_list = []
 
 ######## PUTANGINA DAPAT MAPAGANA NATIN YUNG COMPARISON TAPOS BIGLANG MAY ARITHMETIC PUTANGINA!!!!
 
+#check if sumusunod sa rules ng tamang logic yung mga statements
+#check if tama yung mga data type na kasama sa mga operations
 
 def evaluate(nested_list,legit_symbol_table):
 
@@ -170,7 +172,7 @@ def evaluateInfinite(infiList, legit_symbol_table):
     if infiList[0] == "ALL OF":
         failPresent = False
         for elem in infiList:
-            if elem == 'AN' or elem == "ALL OF":
+            if elem == 'AN' or elem == "ALL OF" or elem == "MKAY":
                 continue
             else:
                 if elem == "FAIL":
@@ -245,7 +247,7 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                 switch_flag = False
                 omg_flag = False
 
-            if symbol_table[line][0] == "OMGWTF" and switch_flag == False:
+            if symbol_table[line][0] == "OMGWTF" and switch_flag == False and omg_flag == False:
                 omg_flag = True
 
             if symbol_table[line][0] == "OMG" and wtf_flag == True:
@@ -257,8 +259,9 @@ def SemanticsAnalyzer(symbol_table, lexemes_table,legit_symbol_table,line_table_
                         if ele[2] == symbol_table[line][1]:
                             switch_flag = True
                             omg_flag = True
-                        else:
-                            omg_flag = False
+                        '''else:
+                            omg_flag = False'''
+                            
 
             if symbol_table[line][0] == "OIC" and orly_flag == False and wtf_flag == True:
                 wtf_flag = False
@@ -1163,14 +1166,14 @@ KTHXBYE
 '''
 
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code5)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code7)
 
 symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings = sa.SyntaxAnalyzer(symbol_table, lexemes_table)
 
 
-print("BAGO MAG SEMANTICS")
+'''print("BAGO MAG SEMANTICS")
 for elem in legit_symbol_table:
-    print(elem)
+    print(elem)'''
 
 SemanticsAnalyzer(symbol_table,lexemes_table,legit_symbol_table,line_table_without_groupings)
 

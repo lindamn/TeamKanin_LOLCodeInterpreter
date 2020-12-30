@@ -5,9 +5,12 @@ class SymbolTableElement():
     self.lexeme = lexeme
     self.type = None
 
+
+#check if nagfofollow sa tamang format yung mga lexemes
+
 def LexicalAnalyzer(code):
 
-    keywords = ["HAI", "KTHXBYE", "BTW", "OBTW", "TLDR", "I", "HAS", "A" "ITZ", "R", "SUM", "DIFF", "PRODUKT", "QUOSHUNT", "MOD", "BIGGR", "SMALLR", "BOTH", "EITHER", "WON", "OF", "NOT", "ANY", "ALL", "BOTH", "SAEM", "DIFFRINT", "SMOOSH", "MAEK", "A", "IS", "NOW", "VISIBLE", "GIMMEH", "O", "RLY?", "YA", "RLY", "MEBBE", "NO", "WAI", "OIC", "WTF?", "OMG", "OMGWTF", "IM", "IN", "YR", "UPPIN", "NERFIN", "YR", "TIL", "WILE", "OUTTA"]
+    keywords = ["HAI", "KTHXBYE", "BTW", "OBTW", "TLDR", "I", "HAS", "A" "ITZ", "R", "SUM", "DIFF", "PRODUKT", "QUOSHUNT", "MOD", "BIGGR", "SMALLR", "BOTH", "EITHER", "WON", "OF", "NOT", "ANY", "ALL", "BOTH", "SAEM", "DIFFRINT", "SMOOSH", "MAEK", "A", "IS", "NOW", "VISIBLE", "GIMMEH", "O", "RLY?", "YA", "RLY", "MEBBE", "NO", "WAI", "OIC", "WTF?", "OMG", "OMGWTF", "IM", "IN", "YR", "UPPIN", "NERFIN", "YR", "TIL", "WILE", "OUTTA", "MKAY"]
     operators = ["SUM", "DIFF", "PRODUKT", "QUOSHUNT", "MOD", "BIGGR", "SMALLR", "EITHER", "WON", "ANY", "ALL"]
     etc = ["I", "BOTH", "IS", "O", "YA", "IM", "NO"]
 
@@ -182,10 +185,9 @@ def LexicalAnalyzer(code):
       if len(line) != 0:
         if line[0] == "BTW":
           line = []
-      # if line == ['KTHXBYE']:
-      #   symbol_table.pop(symbol_table.index(line)+1)
+      
 
-    all_keywords = ["HAI", "KTHXBYE", "I HAS A", "ITZ", "VISIBLE", "GIMMEH", "IT", "SMOOSH", "ALL OF", "ANY OF", "NOT", "AN", "SUM OF", "DIFF OF", "PRODUKT OF",
+    all_keywords = ["HAI", "KTHXBYE", "I HAS A", "ITZ", "VISIBLE", "GIMMEH", "IT", "SMOOSH", "ALL OF", "ANY OF", "MKAY","NOT", "AN", "SUM OF", "DIFF OF", "PRODUKT OF",
     "QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF", "BOTH OF", "EITHER OF", "WON OF", "BOTH SAEM", "DIFFRINT", "FAIL", "WIN", "R", "O RLY?", "YA RLY", "NO WAI",
     "OIC", "MEBBE", "WTF?", "OMG", "OMGWTF"]
 
@@ -196,10 +198,9 @@ def LexicalAnalyzer(code):
         for j in range(len(symbol_table[i])):
           #checks if token is keyword, or string, or int, or float, or var
           if not (symbol_table[i][j] in all_keywords or re.match(r"[\"]([^\"]*?)[\"]$",symbol_table[i][j]) or re.match(r"-{0,1}[0-9]{1,}$",symbol_table[i][j]) or re.match(r"-{0,1}[0-9]{1,}\.[0-9]{1,}$", symbol_table[i][j]) or re.match(r"[a-zA-Z]{1}([a-zA-Z0-9_])*$", symbol_table[i][j])):
-            print("INVALID TOKEN")
+            print("ERROR: Invalid token at line "+ str(symbol_table.index(symbol_table[i])) +": "+str(symbol_table[i][j]))
             return i
-            # print(symbol_table[i][j])
-    # print(symbol_table)
+            
 
     #adds all lexemes in the symbol table
     lexemes_table = []
@@ -390,7 +391,6 @@ HAI
     VISIBLE IT
     SUM OF var1 AN 12.0
     VISIBLE IT
-    2aaaa
 KTHXBYE
 '''
 
@@ -527,4 +527,4 @@ HAI
   VISIBLE "u gif meh " input "!"
 KTHXBYE
 '''
-# LexicalAnalyzer(code)
+LexicalAnalyzer(code)

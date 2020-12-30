@@ -4,10 +4,12 @@ arithmetic_keywords = ["SUM OF", "DIFF OF", "PRODUKT OF", "QUOSHUNT OF", "MOD OF
 comparison_keywords = ["BOTH SAEM", "DIFFRINT", "BIGGR OF", "SMALLR OF"]
 boolean_keywords = ["BOTH OF", "EITHER OF", "WON OF"]
 unary_keywords = ["NOT"]
-infinite_keywords = ["ALL OF", "ANY OF"]
+infinite_keywords = ["ALL OF", "ANY OF", "MKAY"]
 io_keywords = ["VISIBLE", "GIMMEH"]
 
-
+#check yung spelling ng mga keywords
+#check yung placement ng mga keywords at variables
+#check the number of operands per operation: all binary except any of an all of
 
 def SyntaxAnalyzer(symbol_table, lexemes_table):
 
@@ -26,6 +28,8 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
     it_variable = ["IT", "NOOB", None, None]
     legit_symbol_table.append(it_variable)
 
+    checkCodeDelimiter(symbol_table)
+    checkSoloKeywords(symbol_table)
 
     for line in symbol_table:
         temp = copy.deepcopy(line)
@@ -33,7 +37,19 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
         if len(line) != 0:
 
             #deals w output (visible)
+            idx = 0
             if line[0] == "VISIBLE":
+                while True:
+                    if line[idx] in arithmetic_keywords:
+                        Arithmetic(line)
+                    elif line[idx] in comparison_keywords:
+                        Comparison(line)
+                    elif line[idx] in boolean_keywords:
+                        Boolean(line)
+                    idx += 1
+                    if idx == len(line):
+                        break 
+                
                 if line[1] in arithmetic_keywords:
                     Arithmetic(line)
                 elif line[1] in comparison_keywords:
@@ -42,12 +58,26 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                     Boolean(line)
 
             #deals with infinite expressions
-            if line[0] == "ALL OF" or line[0] == "ANY OF":
+            if (line[0] == "ALL OF" or line[0] == "ANY OF") and line[len(line)-1] == "MKAY":
+                #check first if there is MKAY in mid
+                mkayCount = 0
+                for element in line:
+                    if element == "MKAY":
+                        mkayCount += 1
+                if mkayCount > 1:
+                    #ERROR: The line ends with MKAY but contains another MKAY in the middle
+                    print("ERROR: Syntax error, expected 1 MKAY in line "+ str(symbol_table.index(line)) +" but found 2")
+                    exit()
+
                 for element in line:
                     if element in boolean_keywords or element in unary_keywords:
                         Boolean(line)
                 lineIndex = symbol_table.index(line)
                 symbol_table[lineIndex] = [symbol_table[lineIndex]]
+            elif (line[0] == "ALL OF" or line[0] == "ANY OF") and line[len(line)-1] != "MKAY":
+                #ERROR: There should be an MKAY at the end of the line
+                print("ERROR: Syntax error, expected MKAY at the end of line "+ str(symbol_table.index(line)))
+                exit()
 
             #deals w variable initialization
             if line[0] == "I HAS A":
@@ -472,6 +502,7 @@ def Comparison(line):
                     break
     #print(line)
 
+#Error: Kapag Infinite di pwedeng AN MKAY, dapat AN <var> or AN <literal> or AN <expression>
 def Boolean(line):
     boolean_counter = 0
     not_counter = 0
@@ -548,6 +579,45 @@ def Boolean(line):
         
             
     # print(line)
+
+def checkCodeDelimiter(symbol_table):
+    code_delimiters_pairs = [['HAI', 'KTHXBYE'], ['O RLY?', 'OIC', 'WTF?'], ['WTF?', 'OIC', 'O RLY?']]
+    for pair in code_delimiters_pairs:
+        startPresent = False
+        startIndex = None
+        for line in symbol_table:
+            if line != []:
+                if line[0] == pair[0] and not startPresent:     #may nakitang start
+                    startPresent = True
+                    startIndex = symbol_table.index(line) +1
+                elif line[0] == pair[1] and startPresent:       #niclose yung start
+                    startPresent = False
+                elif line[0] == pair[0] and startPresent:       #may start na ulet kahit di pa naend yung taas (FOR HAI ONLI)
+                    #ERROR: Started a new block without closing the prior block
+                    print("ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex))
+                    exit()
+                elif code_delimiters_pairs.index(pair)!= 0 and (line[0] == pair[0] or line[0] == pair[2]) and startPresent:       #may start na ulet kahit di pa naend yung taas
+                    #ERROR: Started a new block without closing the prior block (FOR CONDITIONALS)
+                    print("ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex))
+                    exit()
+                elif line[0] == pair[1] and not startPresent:   #may end pero walang start      
+                    #ERROR: No start function for block but a block is supposedly closed 
+                    print("ERROR: Syntax error, unexpected character at line "+str(symbol_table.index(line)+1))
+                    exit()
+
+        if startPresent:        #may start pero never naclose
+            #ERROR: Block was never closed
+            print("ERROR: Syntax error, expected a closing keyword for the "+ pair[0] +" block at line "+ str(startIndex))
+            exit()
+
+def checkSoloKeywords(symbol_table):
+    solo_in_line_keywords_list = ['HAI', 'KTHXBYE', 'O RLY?', 'YA RLY', 'NO WAI', 'MEBBE', 'WTF?', 'OMGWTF', 'GTFO', 'OIC']
+    for line in symbol_table:
+        if line != [] and line[0] in solo_in_line_keywords_list and len(line) != 1:
+            #ERROR: Unexpected word after a keyword
+            print("ERROR: Syntax error, unexpected character after keyword "+ str(line[0]) +" in line "+ str(symbol_table.index(line)+1))
+            exit()
+
 
 code7 = '''
 BTW for switch
@@ -665,7 +735,7 @@ HAI
     BIGGR OF PRODUKT OF 11 AN 2 AN QUOSHUNT OF SUM OF 3 AN 5 AN 2
     VISIBLE IT
     BTW arithmetic with variables
-    I HAS A 0ar1 ITZ 5
+    I HAS A var1 ITZ 5
     I HAS A var2 ITZ 3
     DIFF OF var2 AN var1
     VISIBLE IT
@@ -729,9 +799,9 @@ HAI
   VISIBLE IT
   NOT WIN
   VISIBLE IT
-  ALL OF WIN AN WIN AN WIN AN FAIL AN WIN
+  ALL OF WIN AN WIN AN WIN AN FAIL AN WIN MKAY
   VISIBLE IT
-  ANY OF WIN AN WIN AN WIN AN FAIL AN WIN
+  ANY OF WIN AN WIN AN WIN AN FAIL AN WIN MKAY
   VISIBLE IT
   BTW compound expressions
   BOTH OF NOT WIN AN NOT WIN
@@ -810,7 +880,7 @@ HAI
 KTHXBYE
 '''
 
-symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code)
+symbol_table, lexemes_table = lexical_analyzer3.LexicalAnalyzer(code6)
 
 SyntaxAnalyzer(symbol_table, lexemes_table)
 

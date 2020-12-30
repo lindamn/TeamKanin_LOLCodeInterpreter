@@ -4,9 +4,7 @@ class SymbolTableElement():
   def __init__(self, lexeme):
     self.lexeme = lexeme
     self.type = None
-    self.typeOfValue = None
-    self.value = None
-    self.refEnvironment = None
+
 
 def LexicalAnalyzer(code):
 
