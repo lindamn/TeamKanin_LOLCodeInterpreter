@@ -129,18 +129,44 @@ class Ui_MainWindow(object):
         global symbol_table
         global finished_flag
         global final
+        global initialized_flag
+        global tokenized_flag
+        global syntactically_correct_flag
 
         if finished_flag == False:
             user_input = self.user_input.toPlainText()
+
+            exists_flag = False
             # check if var is in symbol table
             for j in range(0, len(final[3])):
                 if final[3][j][0] == lexemes[0][current_line][1]:
                     final[3][j][2] = user_input
                     self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(final[3][j][2]))
+                    exists_flag = True
                     break
+            
+            if exists_flag == False:
+                final[0].append("ERROR: Semantic error, variable is uninitialized")
+                #print yung lines bago magkaerror
+                for j in range(0, len(final[0])):
+                    self.code_output.append(str(final[0][j]))
+                #ayusin symbol table bago magkaerror
+                for j in range(0, len(final[3])):
+                    if isinstance(final[3][j][2], str):
+                        self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(final[3][j][2]))
+                    elif final[3][j][2] == None:
+                        self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem("NOOB"))
+                    else:
+                        self.symboltable_list.setItem(j,1,QtWidgets.QTableWidgetItem(str(final[3][j][2])))
+                finished_flag = True
+                current_line = 0
+                initialized_flag = False
+                tokenized_flag = False
+                syntactically_correct_flag = False
+                return
             current_line += 1
             running = True
-            print("i was clicked!")
+            # print("i was clicked!")
             self.execute_clicked(MainWindow)
 
     def execute_clicked(self, MainWindow):

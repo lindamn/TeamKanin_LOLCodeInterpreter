@@ -46,6 +46,8 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
     if operationsLine != True:
         return operationsLine
 
+    current_line_no = 0
+
     for line in symbol_table:
         temp = copy.deepcopy(line)
 
