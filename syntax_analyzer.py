@@ -42,6 +42,7 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
     if operationsLine != True:
         return operationsLine
 
+<<<<<<< HEAD
     orderOfConditionalsIfElse = checkOrderOfConditionalsIfElse(line_table_without_groupings)
     if orderOfConditionalsIfElse != True:
         return orderOfConditionalsIfElse
@@ -52,6 +53,16 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
 
     current_line_no = 0
 
+=======
+    current_line_no = 0
+
+    if ["HAI"] not in symbol_table:
+        return "ERROR: Syntax error, Code Delimiter HAI is missing."
+    
+    if ["KTHXBYE"] not in symbol_table:
+        return "ERROR: Syntax error, Code Delimiter KTHXBYE is missing."
+
+>>>>>>> 9d6293a78716117fe7b5fa2e638722c6e4c18b10
     for line in symbol_table:
         temp = copy.deepcopy(line)
 

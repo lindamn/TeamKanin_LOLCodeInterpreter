@@ -7,7 +7,9 @@ unary_keywords = ["NOT"]
 infinite_keywords = ["ALL OF", "ANY OF"]
 io_keywords = ["VISIBLE", "GIMMEH"]
 
-visible_list = []
+all_keywords = ["HAI", "KTHXBYE", "I HAS A", "ITZ", "VISIBLE", "GIMMEH", "IT", "SMOOSH", "ALL OF", "ANY OF", "MKAY","NOT", "AN", "SUM OF", "DIFF OF", "PRODUKT OF",
+"QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF", "BOTH OF", "EITHER OF", "WON OF", "BOTH SAEM", "DIFFRINT", "FAIL", "WIN", "R", "O RLY?", "YA RLY", "NO WAI",
+"OIC", "MEBBE", "WTF?", "OMG", "OMGWTF"]
 
 ######## PUTANGINA DAPAT MAPAGANA NATIN YUNG COMPARISON TAPOS BIGLANG MAY ARITHMETIC PUTANGINA!!!!
 
@@ -23,7 +25,7 @@ def evaluate(nested_list,legit_symbol_table):
 
         #dito ichecheck kung valid ba yung format ng operands
         if sa.checkInt(nested_list) or sa.checkFloat(nested_list) or sa.checkVar(nested_list):
-
+            
             if sa.checkVar(nested_list):
                 for elements in legit_symbol_table:
                     if nested_list == elements[0]:
@@ -243,8 +245,6 @@ def evaluateNot(nested_list,legit_symbol_table):
     }
     return ops[op](evaluateComparison(operand1,legit_symbol_table))
 
-# ! TO DO: GAWIN YUNG NONE KINEME DITO
-
 def evaluateInfinite(infiList, legit_symbol_table):
 
     if infiList[0] == "ALL OF":
@@ -406,6 +406,24 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                 print(orly_flag)
                 print('goeval_flag: ',end="")
                 print(goeval_flag)
+                
+                #check if there are variables that do not exist in the symbol table
+                for index in range(0,len(line_table_without_groupings[line])):
+                    #if keyword is a reserved keyword/int/float/str, just skip
+                    if isinstance(line_table_without_groupings[line][index], int) or isinstance(line_table_without_groupings[line][index], float):
+                        continue
+                    elif line_table_without_groupings[line][index] in all_keywords or re.match(r"\-{0,1}[0-9]{1,}$",line_table_without_groupings[line][index]) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", line_table_without_groupings[line][index]) or re.match(r"[\"]([^\"]*?)[\"]", line_table_without_groupings[line][index]):
+                        continue
+                    else: #if it is a varident
+                        initialized_flag = False
+                        for k in range(0,len(legit_symbol_table)):
+                            if legit_symbol_table[k][0] == line_table_without_groupings[line][index]:
+                                initialized_flag = True
+                                break
+                        if initialized_flag == False:
+                            visible_list.append("ERROR: Semantic error, variable has not been initialized yet but still used at line " + str(current_line+1))
+                            return visible_list, legit_symbol_table
+                            
                 if isinstance(symbol_table[line][0],list):
                     if symbol_table[line][0][0] in arithmetic_keywords:
 
@@ -1366,4 +1384,4 @@ KTHXBYE
 #tangina
 #GOODNIGHT
 #MATULOG NA TAYO AWAT NA MUNA
-print(visible_list)
+# print(visible_list)
