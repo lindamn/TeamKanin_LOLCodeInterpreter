@@ -197,7 +197,6 @@ class Ui_MainWindow(object):
             if tokenized_flag == False:
                 # ieexecute and lexical analyzer
                 lexemes = la.LexicalAnalyzer(code)
-                
                 tokenized_flag = True
 
             # check lang if hindi line # yung nirereturn ni lexeme, if int yung nireturn ibig sabihin may maling token
