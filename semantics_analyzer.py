@@ -350,6 +350,7 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                 omg_flag = False
 
             if symbol_table[line][0] == "OMGWTF" and switch_flag == False and omg_flag == False:
+                switch_flag = True
                 omg_flag = True
 
             if symbol_table[line][0] == "OMG" and wtf_flag == True:

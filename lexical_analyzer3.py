@@ -20,7 +20,7 @@ def LexicalAnalyzer(code):
 
     # splits the lines by spaces
     for i in range(0, len(lines)):
-        if re.search(r"VISIBLE",lines[i]) and re.search(r"\s*V", lines[i]) or re.search(r"[A-z]{1}([A-z0-9_])*\sR\s", lines[i]):      #eto lang yung nabago mami
+        if re.search(r"\s*VISIBLE",lines[i]) and re.search(r"\s*V", lines[i]) or re.search(r"[A-z]{1}([A-z0-9_])*\sR\s", lines[i]):      #eto lang yung nabago mami
             quote_flag = False
             strings = re.findall(r"[\"]([^\"]*)[\"]", lines[i])
             strings_count = len(strings)
@@ -33,7 +33,7 @@ def LexicalAnalyzer(code):
             
             #appends the variables and literals to the list of lexemes
             new_split_list = []
-            if re.search("VISIBLE", lines[i]) and re.search("\s{2,}V", lines[i]):
+            if re.search(r"\s*VISIBLE", lines[i]) and re.search(r"\s*V", lines[i]):
                 new_split_list.append("VISIBLE")
             for j in range(0, len(new_temp)):
                 # counts the number of double quotes in a string, if it is 2 then it automatically adds the string to the list of lexemes

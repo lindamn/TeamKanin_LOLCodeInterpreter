@@ -271,7 +271,7 @@ class Ui_MainWindow(object):
 
             current_line = final[1]
             if running and current_line <= len(lexemes[0]):
-                print(final[0])
+                # print(final[0])
                 #pagprint ng VISIBLE lines
                 for j in range(0, len(final[0])):
                     self.code_output.append(str(final[0][j]))
