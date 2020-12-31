@@ -20,7 +20,7 @@ def LexicalAnalyzer(code):
 
     # splits the lines by spaces
     for i in range(0, len(lines)):
-        if re.search(r"\s*VISIBLE",lines[i]) and re.search(r"\s*V", lines[i]) or re.search(r"[A-z]{1}([A-z0-9_])*\sR\s", lines[i]):      #eto lang yung nabago mami
+        if re.search(r"^\s*VISIBLE",lines[i]) and re.search(r"^\s*V", lines[i]) or re.search(r"^[A-z]{1}([A-z0-9_])*\sR\s", lines[i]):      #eto lang yung nabago mami
             quote_flag = False
             strings = re.findall(r"[\"]([^\"]*)[\"]", lines[i])
             strings_count = len(strings)

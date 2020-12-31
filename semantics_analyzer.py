@@ -11,14 +11,7 @@ all_keywords = ["HAI", "KTHXBYE", "I HAS A", "ITZ", "VISIBLE", "GIMMEH", "IT", "
 "QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF", "BOTH OF", "EITHER OF", "WON OF", "BOTH SAEM", "DIFFRINT", "FAIL", "WIN", "R", "O RLY?", "YA RLY", "NO WAI",
 "OIC", "MEBBE", "WTF?", "OMG", "OMGWTF"]
 
-######## PUTANGINA DAPAT MAPAGANA NATIN YUNG COMPARISON TAPOS BIGLANG MAY ARITHMETIC PUTANGINA!!!!
-
-#check if sumusunod sa rules ng tamang logic yung mga statements
-#check if tama yung mga data type na kasama sa mga operations
-
-
 # credits to https://stackoverflow.com/a/40775654
-#ERROR BAWAL NESTED OTHER OPERATIONS SA ARITHMETIC
 def evaluate(nested_list,legit_symbol_table):
 
     if isinstance(nested_list, str):
@@ -342,12 +335,11 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
         # print(symbol_table[line])
         if symbol_table[line] != []:
 
-            if symbol_table[line][0] == "WTF?":
+            if symbol_table[line][0] == "WTF?": 
                 wtf_flag = True
 
             if symbol_table[line][0] == "GTFO":
                 switch_flag = False
-                omg_flag = False
 
             if symbol_table[line][0] == "OMGWTF" and switch_flag == False and omg_flag == False:
                 switch_flag = True
@@ -362,8 +354,6 @@ def SemanticsAnalyzer(starting_line,symbol_table, lexemes_table,legit_symbol_tab
                         if ele[2] == symbol_table[line][1]:
                             switch_flag = True
                             omg_flag = True
-                        '''else:
-                            omg_flag = False'''
                             
 
             if symbol_table[line][0] == "OIC" and orly_flag == False and wtf_flag == True:

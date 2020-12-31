@@ -200,8 +200,8 @@ class Ui_MainWindow(object):
                 tokenized_flag = True
 
             # check lang if hindi line # yung nirereturn ni lexeme, if int yung nireturn ibig sabihin may maling token
-            if not isinstance(lexemes, int):
-                
+            if not isinstance(lexemes, int) and not isinstance(lexemes, str):
+                # print("????")
                 for i in range(0, len(lexemes[1])):
                     self.lexemes_list.insertRow(i)
                     self.lexemes_list.setItem(i,0,QtWidgets.QTableWidgetItem(lexemes[1][i].lexeme))
@@ -241,8 +241,7 @@ class Ui_MainWindow(object):
                 finished_flag = True
                 current_line = 0
                 initialized_flag = False
-                error_message = "LEXICAL ERROR AT LINE " + str(lexemes+1)
-                self.code_output.append(error_message)
+                self.code_output.append(lexemes)
                 return
             
         if tokenized_flag == True and syntactically_correct_flag == True:

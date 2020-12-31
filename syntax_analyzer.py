@@ -86,21 +86,21 @@ def SyntaxAnalyzer(symbol_table, lexemes_table):
                     if idx == len(line):
                         break 
                 
-                if line[1] in arithmetic_keywords:
-                    for i in range(2, len(line_table_without_groupings[current_line_no])):
-                        current_keyword = line_table_without_groupings[current_line_no][i]
-                        # checks if only arithmetic expressions/ints/floats follow
-                        if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
-                            continue
-                        else:
-                            #checks if is is a variable name or if it is a reserved keyword
-                            if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
-                                return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
-                    Arithmetic(line)
-                elif line[1] in comparison_keywords:
-                    Comparison(line)
-                elif line[1] in boolean_keywords:
-                    Boolean(line)
+                # if line[1] in arithmetic_keywords:
+                #     for i in range(2, len(line_table_without_groupings[current_line_no])):
+                #         current_keyword = line_table_without_groupings[current_line_no][i]
+                #         # checks if only arithmetic expressions/ints/floats follow
+                #         if (current_keyword in arithmetic_keywords or re.match(r"\-{0,1}[0-9]{1,}$",current_keyword) or re.match(r"\-{0,1}[0-9]{1,}\.[0-9]{1,}$", current_keyword)):
+                #             continue
+                #         else:
+                #             #checks if is is a variable name or if it is a reserved keyword
+                #             if current_keyword in all_keywords and current_keyword != "AN" and current_keyword != "IT":
+                #                 return "ERROR: Syntax error, attempted to evaluate an arithmetic expression with incorrect keyword/data type at line "+ str(symbol_table.index(line)+1)
+                #     Arithmetic(line)
+                # elif line[1] in comparison_keywords:
+                #     Comparison(line)
+                # elif line[1] in boolean_keywords:
+                #     Boolean(line)
 
             #deals with infinite expressions
             if (line[0] == "ALL OF" or line[0] == "ANY OF") and line[len(line)-1] == "MKAY":
