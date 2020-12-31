@@ -68,7 +68,6 @@ def LexicalAnalyzer(code):
         for j in range(0, len(split_list)):
             if split_list[j] != "":
                 new_split_list.append(split_list[j])
-        # if new_split_list != []:
         symbol_table.append(new_split_list)
         
     # pagsasama samahin yung mga keywords separated w spaces
@@ -191,6 +190,7 @@ def LexicalAnalyzer(code):
     "QUOSHUNT OF", "MOD OF", "BIGGR OF", "SMALLR OF", "BOTH OF", "EITHER OF", "WON OF", "BOTH SAEM", "DIFFRINT", "FAIL", "WIN", "R", "O RLY?", "YA RLY", "NO WAI",
     "OIC", "MEBBE", "WTF?", "OMG", "OMGWTF"]
 
+    lexError = False
     # checks if all lexemes are valid
     for i in range(len(symbol_table)):
       #checks if current line is not empty
@@ -199,8 +199,10 @@ def LexicalAnalyzer(code):
           #checks if token is keyword, or string, or int, or float, or var
           if not (symbol_table[i][j] in all_keywords or re.match(r"[\"]([^\"]*?)[\"]$",symbol_table[i][j]) or re.match(r"-{0,1}[0-9]{1,}$",symbol_table[i][j]) or re.match(r"-{0,1}[0-9]{1,}\.[0-9]{1,}$", symbol_table[i][j]) or re.match(r"[a-zA-Z]{1}([a-zA-Z0-9_])*$", symbol_table[i][j])):
             print("ERROR: Invalid token at line "+ str(symbol_table.index(symbol_table[i])) +": "+str(symbol_table[i][j]))
-            return "ERROR: Invalid token at line "+ str(symbol_table.index(symbol_table[i])) +": "+str(symbol_table[i][j])
+            lexError = "ERROR: Invalid token at line "+ str(symbol_table.index(symbol_table[i])) +": "+str(symbol_table[i][j])
             
+    if lexError:
+      return lexError
 
     #adds all lexemes in the symbol table
     lexemes_table = []
